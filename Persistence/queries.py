@@ -1,0 +1,1 @@
+SELECT_ALL_REVIEWS = "SELECT * FROM review"
