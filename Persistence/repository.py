@@ -20,3 +20,6 @@ class Repository:
 
     def insert_values(self, query, val): #For inserting values into DB
         self.cursor.execute(query, val)
+        self.rmsdb.commit()
+
+

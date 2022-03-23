@@ -32,17 +32,20 @@ def main ():
         print(random_sentiment) """
 
 
-    for x in range (1):
-        random_sentiment = round(random.uniform(-1, 1), 3) #Generate random sentiment score between -1 and 1
-        SQL = "UPDATE review_clone_test SET sentiment_score = (%s) WHERE id = 1" #SQL query to run
-        val = (random_sentiment) #random sentiment score value to be inserted into sql query
+    for x in range (1, 250): #loops through 10 rows in review_clone_test:
+        random_sentiment = round(random.uniform(-1, 1), 3) #Generate random sentiment score between -1 and 1, rounded to 3 decimal places
+        SQL = "UPDATE review_clone_test SET sentiment_score = (%s) WHERE id = (%s)" #SQL query to run
+        val = (random_sentiment,x) #random sentiment score value to be inserted into sql query and row (x) in which to insert/update
 
         repository.insert_values(SQL, val) #Send  sql and SS value to insert_values() in repository.py
-        repository.rmsdb.commit()
+    
+   
+    repository.rmsdb.close()   
 
 
-        repository.rmsdb.close()
-
+def calculateImportanceScore():
+    #do nothing
+    print("test")
 
 
 
