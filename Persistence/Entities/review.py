@@ -41,3 +41,4 @@ class Review:
 
     def get_customer_id(self):
         return self.customer_id
+        
