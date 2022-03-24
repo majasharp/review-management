@@ -23,3 +23,15 @@ class Repository:
         self.rmsdb.commit()
 
 
+    def returnSingleRow (self, query, val):
+        self.cursor.execute(query, val)
+        result = self.cursor.fetchone() #saves tuple to result
+        return result[0] #returns the first result in the tuple
+        #return self.cursor.fetchone() #returns value as a tuple, not ideal
+
+
+
+
+
+
+
