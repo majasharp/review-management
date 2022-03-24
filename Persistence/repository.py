@@ -16,7 +16,6 @@ class Repository:
     def execute_query(self, query):
         self.cursor.execute(query)
         return self.cursor.fetchall() 
-        # do not touch
 
     def insert_values(self, query, val): #For inserting values into DB
         self.cursor.execute(query, val)

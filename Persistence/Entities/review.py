@@ -1,5 +1,5 @@
 class Review:
-    def __init__(self, id, product_title, product_category, star_rating, status, title, body, purchase_price, created, customer_id):
+    def __init__(self, id, product_title, product_category, star_rating, status, title, body, purchase_price, created, customer_id, checked_out_user_id, tl_assistance_required, importance_score):
 
         self.id = id
         self.product_title = product_title
@@ -11,6 +11,9 @@ class Review:
         self.purchase_price = purchase_price
         self.created = created
         self.customer_id = customer_id
+        self.checked_out_user_id = checked_out_user_id
+        self.tl_assistance_required = tl_assistance_required
+        self.importance_score = importance_score
 
     def get_id(self):
         return self.id
@@ -41,4 +44,13 @@ class Review:
 
     def get_customer_id(self):
         return self.customer_id
+
+    def get_checked_out_user_id(self):
+        return self.checked_out_user_id
+
+    def get_tl_assistance_required(self):
+        return self.tl_assistance_required
+
+    def get_importance_score(self):
+        return self.importance_score
         

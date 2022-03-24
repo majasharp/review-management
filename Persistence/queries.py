@@ -4,3 +4,4 @@ SELECT_ALL_USERS = "SELECT * FROM users"
 
 SELECT_ALL_TEST_REVIEWS = "SELECT * FROM review_clone_test"
 
+SELECT_NEXT_REVIEW = "SELECT * FROM review_clone_test LIMIT 1"
