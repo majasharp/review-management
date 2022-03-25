@@ -1,9 +1,9 @@
-
+from Presentation.mainapp import tkinterApp
 from Persistence.databaseconfig import DataBaseConfigReader
 from Persistence.repository import Repository
 from Persistence.queries import SELECT_ALL_REVIEWS, SELECT_ALL_TEST_REVIEWS, SELECT_ALL_USERS
 import random
-from Services.reviewservice import ReviewService
+from service import Service
 
 
 def main ():
@@ -11,10 +11,11 @@ def main ():
     config = reader.read_db_config('databaseconfig.json')
     repository = Repository(config)
 
-    service = ReviewService(repository)
+    service = Service(repository)
     nextReview = service.get_next_review()
 
-    print(nextReview.get)
+    app = tkinterApp(service)
+    app.mainloop()
 
     """  results = repository.execute_query(SELECT_ALL_REVIEWS)
     for result in results:
@@ -48,6 +49,7 @@ def insertRandomSentimentScore(): #If you run this, also run calculateImportance
 
         repository.insert_values(SQL, val) #Send  sql and SS value to insert_values() in repository.py
     repository.rmsdb.close()   
+
 
 
 def calculateImportanceScore():
@@ -89,6 +91,8 @@ def calculateImportanceScore():
         #TODO - Importance_score not being calculated correctly, investigate...
         if sentiment_score < 0: #converts sentiment_score to multiplier for calculating importance_score
             sentiment_multiplier = sentiment_score + 2 #e.g. converts -0.335 to 1.335 
+            #maja adding 2 here makes it 1.665
+            #maja get absolute value of -0.335 = 0.335 then add 1 = 1.335
         else:
             sentiment_multiplier = 1
         #print(str(isPremium) + " " + str(star_rating) + " " + str(sentiment_score))
