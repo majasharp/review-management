@@ -28,6 +28,10 @@ class Repository:
         return result[0] #returns the first result in the tuple
         #return self.cursor.fetchone() #returns value as a tuple, not ideal
 
+    def get_rows(self, query, params):
+        self.cursor.execute(query, params)
+        return self.cursor.fetchall()
+
 
 
 
