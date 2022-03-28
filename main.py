@@ -14,7 +14,7 @@ def main ():
     service = ReviewService(repository)
     nextReview = service.get_next_review()
 
-    print(nextReview.get)
+    #print(nextReview.get)
 
     """  results = repository.execute_query(SELECT_ALL_REVIEWS)
     for result in results:
@@ -29,7 +29,11 @@ def main ():
         print(review)
         """
     #insertRandomSentimentScore() #Do not run insertRandomSentimentScore() without also running calculateImportanceScore()
-    calculateImportanceScore()
+    #calculateImportanceScore()
+
+
+    print(nextReview.get_body())
+
 
 
 
@@ -88,10 +92,11 @@ def calculateImportanceScore():
 
         #TODO - Importance_score not being calculated correctly, investigate...
         if sentiment_score < 0: #converts sentiment_score to multiplier for calculating importance_score
-            sentiment_multiplier = sentiment_score + 2 #e.g. converts -0.335 to 1.335 
+            sentiment_multiplier = abs(sentiment_score) + 1 #e.g. converts -0.335 to 1.335 
         else:
-            sentiment_multiplier = 1
-        #print(str(isPremium) + " " + str(star_rating) + " " + str(sentiment_score))
+            sentiment_multiplier = 1 #if sentiment_score is positive, no multiplier
+        
+
 
         if isPremium == 1:
             importance_score = (base_score * sentiment_multiplier) + 2
