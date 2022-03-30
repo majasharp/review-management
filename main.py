@@ -13,11 +13,11 @@ def main ():
     config = reader.read_db_config('databaseconfig.json')
     repository = Repository(config)
 
-    #service = Service(repository)
-    #nextReview = service.get_next_review()
+    service = Service(repository)
+    nextReview = service.get_next_review()
 
-    #app = tkinterApp(service)
-   # app.mainloop()
+    app = tkinterApp(service)
+    app.mainloop()
 
     """  results = repository.execute_query(SELECT_ALL_REVIEWS)
     for result in results:
@@ -31,48 +31,33 @@ def main ():
     for review in testreviewresults:
         print(review)
         """
-    #insertRandomSentimentScore() #Do not run insertRandomSentimentScore() without also running calculateImportanceScore()
-    #calculateImportanceScore()
-
-
-    calculateSentimentScore()
 
 
 
-def calculateSentimentScore():
+def calculateSentimentScore(x):
     reader = DataBaseConfigReader()
     config = reader.read_db_config('databaseconfig.json')
     repository = Repository(config)
-
-    for x in range (1, 250):
-        SQL = "SELECT body from review where id = (%s)"
-        val = (x,)
-        reviewBody = repository.returnSingleRow(SQL, val)
-
-        print(reviewBody)
-
-        sia = SentimentIntensityAnalyzer()
-        print(sia.polarity_scores(reviewBody))
-        print("\n")
-
-
-
 
     
+    SQL = "SELECT body from review where id = (%s)"
+    val = (x,)
+    reviewBody = repository.returnSingleRow(SQL, val)
 
-def insertRandomSentimentScore(): #If you run this, also run calculateImportanceScore() to update importance_score values in DB to match
+    #print(reviewBody)
 
-    reader = DataBaseConfigReader()
-    config = reader.read_db_config('databaseconfig.json')
-    repository = Repository(config)
+    sia = SentimentIntensityAnalyzer()
+    sentiment_score = sia.polarity_scores(reviewBody)['compound']
+    #print(sentiment_score)
+    return sentiment_score
+ 
 
-    for x in range (1, 250): #loops through 10 rows in review_clone_test:
-        random_sentiment = round(random.uniform(-1, 1), 3) #Generate random sentiment score between -1 and 1, rounded to 3 decimal places
-        SQL = "UPDATE review_clone_test SET sentiment_score = (%s) WHERE id = (%s)" #SQL query to run
-        val = (random_sentiment,x) #random sentiment score value to be inserted into sql query and row (x) in which to insert/update
+    #uncomment below to insert sentiment scores into DB column
+    '''SQL = "UPDATE review_clone_test SET sentiment_score = (%s) WHERE id = (%s)" #SQL query to run
+    val = (sentiment_score,x) #random sentiment score value to be inserted into sql query and row (x) in which to insert/update
 
-        repository.insert_values(SQL, val) #Send  sql and SS value to insert_values() in repository.py
-    repository.rmsdb.close()   
+    repository.insert_values(SQL, val) #Send  sql and SS value to insert_values() in repository.py
+    repository.rmsdb.close()   '''
 
 
 
@@ -95,10 +80,10 @@ def calculateImportanceScore():
         val = (x,)
         star_rating = repository.returnSingleRow(query, val)
 
-        #pull review sentiment_score
-        query = "select sentiment_score from review_clone_test where id = (%s)"
-        val = (x,)
-        sentiment_score = repository.returnSingleRow(query, val)
+        #calculate SentimentScore
+        sentiment_score = calculateSentimentScore(x)
+        print(sentiment_score)
+
 
         if star_rating == 5:
             base_score = 0
@@ -115,8 +100,6 @@ def calculateImportanceScore():
         #TODO - Importance_score not being calculated correctly, investigate...
         if sentiment_score < 0: #converts sentiment_score to multiplier for calculating importance_score
             sentiment_multiplier = abs(sentiment_score) + 1 #e.g. converts -0.335 to 1.335 
-            #maja adding 2 here makes it 1.665
-            #maja get absolute value of -0.335 = 0.335 then add 1 = 1.335
         else:
             sentiment_multiplier = 1 #if sentiment_score is positive, no multiplier
         
