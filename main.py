@@ -4,6 +4,8 @@ from Persistence.repository import Repository
 from Persistence.queries import SELECT_ALL_REVIEWS, SELECT_ALL_TEST_REVIEWS, SELECT_ALL_USERS
 import random
 from service import Service
+from nltk.sentiment import SentimentIntensityAnalyzer
+
 
 
 def main ():
@@ -11,11 +13,11 @@ def main ():
     config = reader.read_db_config('databaseconfig.json')
     repository = Repository(config)
 
-    service = Service(repository)
-    nextReview = service.get_next_review()
+    #service = Service(repository)
+    #nextReview = service.get_next_review()
 
-    app = tkinterApp(service)
-    app.mainloop()
+    #app = tkinterApp(service)
+   # app.mainloop()
 
     """  results = repository.execute_query(SELECT_ALL_REVIEWS)
     for result in results:
@@ -33,7 +35,25 @@ def main ():
     #calculateImportanceScore()
 
 
-    print(nextReview.get_body())
+    calculateSentimentScore()
+
+
+
+def calculateSentimentScore():
+    reader = DataBaseConfigReader()
+    config = reader.read_db_config('databaseconfig.json')
+    repository = Repository(config)
+
+    for x in range (1, 250):
+        SQL = "SELECT body from review where id = (%s)"
+        val = (x,)
+        reviewBody = repository.returnSingleRow(SQL, val)
+
+        print(reviewBody)
+
+        sia = SentimentIntensityAnalyzer()
+        print(sia.polarity_scores(reviewBody))
+        print("\n")
 
 
 
