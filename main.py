@@ -19,20 +19,34 @@ def main ():
 
     
 
-    #app = tkinterApp(service)
-    #app.mainloop()
-    close_positive_reviews()
+    app = tkinterApp(service)
+    app.mainloop()
+   
+    ##ignore below - Andrew tinkering
+    #allreviews = service.get_all_test_reviews()
+    #print(allreviews)
+    #review = service.get_next_review
+    #id = Review.get_id(review)
+    #print(id)
+  
+
+    '''allReviews = repository.execute_query(SELECT_ALL_TEST_REVIEWS)
+    print(allReviews[0])
+
+    for review in allReviews:
+        print(review)
+        print("\n")'''
 
     
 
 
 
-def close_positive_reviews():
+def close_positive_reviews(): #Sets review status to CLOSED if Star_rating > 3
     reader = DataBaseConfigReader()
     config = reader.read_db_config('databaseconfig.json')
     repository = Repository(config)
 
-    for x in range(1,250):
+    for x in range(1, 250):
         sql = "SELECT star_rating FROM review_clone_test WHERE id = (%s)"
         val = (x,)
 
@@ -57,7 +71,7 @@ def calculateSentimentScore(x):
     #print(reviewBody)
 
     sia = SentimentIntensityAnalyzer()
-    sentiment_score = sia.polarity_scores(reviewBody)['compound']
+    sentiment_score = sia.polarity_scores(reviewBody)['compound'] #saves compound score result to sentiment_score
     #print(sentiment_score)
     return sentiment_score
  

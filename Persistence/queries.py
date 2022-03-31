@@ -1,4 +1,4 @@
-SELECT_ALL_REVIEWS = "SELECT * FROM review where id = 1"
+SELECT_ALL_REVIEWS = "SELECT * FROM review_clone_test"
 
 SELECT_ALL_USERS = "SELECT * FROM users"
 
