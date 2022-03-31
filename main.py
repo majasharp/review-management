@@ -1,10 +1,12 @@
+from html import entities
+from Persistence.Entities.review import Review
 from Presentation.mainapp import tkinterApp
 from Persistence.databaseconfig import DataBaseConfigReader
 from Persistence.repository import Repository
 from Persistence.queries import SELECT_ALL_REVIEWS, SELECT_ALL_TEST_REVIEWS, SELECT_ALL_USERS
-import random
 from service import Service
 from nltk.sentiment import SentimentIntensityAnalyzer
+
 
 
 
@@ -14,24 +16,32 @@ def main ():
     repository = Repository(config)
 
     service = Service(repository)
-    nextReview = service.get_next_review()
 
-    app = tkinterApp(service)
-    app.mainloop()
-
-    """  results = repository.execute_query(SELECT_ALL_REVIEWS)
-    for result in results:
-        print(result)
     
-    userresults = repository.execute_query(SELECT_ALL_USERS)
-    for users in userresults:
-        print(users) 
 
-    testreviewresults = repository.execute_query(SELECT_ALL_TEST_REVIEWS)
-    for review in testreviewresults:
-        print(review)
-        """
+    #app = tkinterApp(service)
+    #app.mainloop()
+    close_positive_reviews()
 
+    
+
+
+
+def close_positive_reviews():
+    reader = DataBaseConfigReader()
+    config = reader.read_db_config('databaseconfig.json')
+    repository = Repository(config)
+
+    for x in range(1,250):
+        sql = "SELECT star_rating FROM review_clone_test WHERE id = (%s)"
+        val = (x,)
+
+        star_rating = repository.returnSingleRow(sql, val)
+        
+        if star_rating > 3:
+            sql = "UPDATE review_clone_test set status = 'CLOSED' where id = (%s)"
+            val = (x,)
+            repository.update_status_column(sql, val)
 
 
 def calculateSentimentScore(x):
