@@ -22,20 +22,14 @@ def main ():
     app = tkinterApp(service)
     app.mainloop()
    
-    ##ignore below - Andrew tinkering
-    #allreviews = service.get_all_test_reviews()
-    #print(allreviews)
-    #review = service.get_next_review
-    #id = Review.get_id(review)
-    #print(id)
+
+    #ignore below - Andrew playing
+''' reviews = list(service.get_importance_calc_values())
+    for index in range(len(reviews)):
+        review = reviews[index]
+        star_rating = review.get_star_rating()
+        print(star_rating)'''
   
-
-    '''allReviews = repository.execute_query(SELECT_ALL_TEST_REVIEWS)
-    print(allReviews[0])
-
-    for review in allReviews:
-        print(review)
-        print("\n")'''
 
     
 
@@ -85,12 +79,17 @@ def calculateSentimentScore(x):
 
 
 
-def calculateImportanceScore():
+def calculateImportanceScore(self, service):
     #TODO - NEED MORE EFFICIENT WAY OF PULLING PREMIUM, STAR RATING, AND SENTIMENT_SCORE IN ONE GO, RATHER THAN INDIVIDUALLY
     # Need more efficient way of pulling premium, star_rating and sentiment_score in one, rather than individually
     reader = DataBaseConfigReader()
     config = reader.read_db_config('databaseconfig.json')
     repository = Repository(config)
+    self.service = service
+
+
+    
+    
 
     for x in range (1, 250): 
         

@@ -71,6 +71,7 @@ class NextReviewView(Frame):
 
         self.reviewtext = StringVar()
         self.reviewtext.set("No review has been selected")
+
         self.reviewLabel= Label(self, textvariable=self.reviewtext, wraplength=600)
         self.reviewLabel.grid(row = 1, column = 2, padx = 10, pady = 10)
 
@@ -81,7 +82,7 @@ class NextReviewView(Frame):
         text = self.service.get_next_review().get_body()
         self.reviewtext.set(text)
         print(self.reviewtext)
-        
+
   
   
 class AllReviewsView(Frame):
@@ -135,7 +136,7 @@ class AllReviewsView(Frame):
         set.heading("tl_assistance_required",text="TL ASSISTANCE",anchor=CENTER)
         # set.heading("importance_score",text="IMPORTANCE",anchor=CENTER)
 
-        reviews = list(service.get_reviews(20))
+        reviews = list(service.get_all_test_reviews())
         print(reviews[0])
 
         for index in range(len(reviews)):

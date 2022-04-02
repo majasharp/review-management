@@ -15,6 +15,7 @@ class Review:
         self.tl_assistance_required = tl_assistance_required
         self.importance_score = importance_score
 
+
     def get_id(self):
         return self.id
     
@@ -53,4 +54,4 @@ class Review:
 
     def get_importance_score(self):
         return self.importance_score
-        
+
