@@ -4,9 +4,11 @@ SELECT_ALL_USERS = "SELECT * FROM users"
 
 SELECT_ALL_EMPLOYEES = "SELECT * FROM employee"
 
+SELECT_EMPLOYEE_BY_ID = "SELECT * FROM employee WHERE id = %s"
+
 SELECT_ALL_TEST_REVIEWS = "SELECT * FROM review_clone_test"
 
-SELECT_NEXT_REVIEW = "SELECT * FROM review_clone_test WHERE status = 'NEW' ORDER BY importance_score desc LIMIT 1"
+SELECT_NEXT_REVIEW = "SELECT * FROM review_clone_test WHERE status = 'NEW' AND tl_assistance_required IS null ORDER BY importance_score desc LIMIT 1"
 
 SELECT_REVIEWS = "SELECT * FROM review_clone_test ORDER BY importance_score desc LIMIT %s"
 

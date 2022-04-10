@@ -5,6 +5,7 @@ from Persistence.databaseconfig import DataBaseConfigReader
 from Persistence.repository import Repository
 from Persistence.queries import SELECT_ALL_REVIEWS, SELECT_ALL_TEST_REVIEWS, SELECT_ALL_USERS
 from service import Service
+from login import EMPLOYEE_ID
 from nltk.sentiment import SentimentIntensityAnalyzer
 
 
@@ -16,10 +17,10 @@ def main ():
     repository = Repository(config)
 
     service = Service(repository)
-
+    user = service.get_employee_by_id(EMPLOYEE_ID)
     
 
-    app = tkinterApp(service)
+    app = tkinterApp(service, user)
     app.mainloop()
    
 
@@ -74,7 +75,7 @@ def calculateSentimentScore(x):
     '''SQL = "UPDATE review_clone_test SET sentiment_score = (%s) WHERE id = (%s)" #SQL query to run
     val = (sentiment_score,x) #random sentiment score value to be inserted into sql query and row (x) in which to insert/update
 
-    repository.insert_values(SQL, val) #Send  sql and SS value to insert_values() in repository.py
+    repository.execute_command(SQL, val) #Send  sql and SS value to execute_command() in repository.py
     repository.rmsdb.close()   '''
 
 
@@ -140,7 +141,7 @@ def calculateImportanceScore(self, service):
         SQL = "UPDATE review_clone_test SET importance_score = (%s) WHERE id = (%s)" #SQL query to run
         val = (importance_score,x) #random sentiment score value to be inserted into sql query and row (x) in which to insert/update
 
-        repository.insert_values(SQL, val) #Send  sql and SS value to insert_values() in repository.py
+        repository.execute_command(SQL, val) #Send  sql and SS value to execute_command() in repository.py
 
     repository.rmsdb.close()  
 

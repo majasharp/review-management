@@ -1,4 +1,5 @@
-from Persistence.queries import CALC_IMPORTANCE_VALUES, SELECT_NEXT_REVIEW, SELECT_REVIEW_BY_ID, SELECT_ALL_TEST_REVIEWS, SELECT_ALL_EMPLOYEES
+from Persistence.queries import *
+from Persistence.commands import *
 from Persistence.Entities.review import Review
 from Persistence.Entities.employee import Employee
 
@@ -35,3 +36,16 @@ class Service:
     def get_all_employees(self):
         employees = self.repository.execute_query(SELECT_ALL_EMPLOYEES)
         return map(lambda employee: Employee(employee[0], employee[1], employee[2], employee[3], employee[4]), employees)
+
+    def get_employee_by_id(self, employee_id):
+        employee = self.repository.execute_query(SELECT_EMPLOYEE_BY_ID, (employee_id,))[0]
+        return Employee(employee[0], employee[1], employee[2], employee[3], employee[4])
+
+    def set_tl_assistance_by_id(self, tl_assistance_required, review_id):
+        self.repository.execute_command(SET_TL_ASSISTANCE_REQUIRED_BY_ID, (tl_assistance_required, review_id))
+
+    def add_response(self, response):
+        self.repository.execute_command(ADD_RESPONSE, (response.get_body(), response.get_coupon_id(), response.get_employee_id(), response.get_review_id()))
+
+    def set_review_status(self, status, review_id, employee_id):
+        self.repository.execute_command(SET_STATUS_BY_ID, (status, review_id, employee_id))

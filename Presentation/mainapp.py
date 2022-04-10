@@ -1,16 +1,18 @@
 from tkinter import *
 from tkinter import ttk
+from Persistence.Entities.response import Response
  
-LARGEFONT =("Verdana", 35)
+LARGEFONT =("Verdana", 25)
   
 class tkinterApp(Tk):
      
-    def __init__(self, service):
+    def __init__(self, service, user):
          
         Tk.__init__(self)
          
         container = Frame(self) 
         container.pack(side = "top", fill = "both", expand = True)
+        super().geometry('1080x1400')
   
         container.grid_rowconfigure(0, weight = 1)
         container.grid_columnconfigure(0, weight = 1)
@@ -18,7 +20,7 @@ class tkinterApp(Tk):
         self.frames = {} 
   
         for F in (Home, NextReviewView, AllReviewsView, EmployeesView):
-            frame = F(container, self, service)
+            frame = F(container, self, service, user)
             self.frames[F] = frame
             frame.grid(row = 0, column = 0, sticky ="nsew")
         self.show_frame(Home)
@@ -29,66 +31,91 @@ class tkinterApp(Tk):
 
 
 class Home(Frame):
-    def __init__(self, parent, controller, service):
+    def __init__(self, parent, controller, service, user):
         Frame.__init__(self, parent)
         self.service = service
+        self.user = user
          
         label = Label(self, text ="Constella Review Management", font = LARGEFONT)
-        label.grid(row = 0, column = 4, padx = 10, pady = 10)
+        label.grid(row = 0, column = 1, padx = 5, pady = 5)
   
         button1 = Button(self, text ="Next Review",
         command = lambda : controller.show_frame(NextReviewView))
-        button1.grid(row = 1, column = 1, padx = 10, pady = 10)
+        button1.grid(row = 1, column = 0, padx = 5, pady = 5)
   
         button2 = Button(self, text ="All Reviews",
         command = lambda : controller.show_frame(AllReviewsView))
-        button2.grid(row = 2, column = 1, padx = 10, pady = 10)
+        button2.grid(row = 2, column = 0, padx = 5, pady = 5)
 
         button3 = Button(self, text ="Employee View",
         command = lambda : controller.show_frame(EmployeesView))
-        button3.grid(row = 3, column = 1, padx = 10, pady = 10)
+        button3.grid(row = 3, column = 0, padx = 5, pady = 5)
   
           
 class NextReviewView(Frame):
-    def __init__(self, parent, controller, service):
+    def __init__(self, parent, controller, service, user):
         Frame.__init__(self, parent)
         self.service = service
+        self.user = user
+        self.current_review_id = None
 
         label = Label(self, text ="Next Review View", font = LARGEFONT)
-        label.grid(row = 0, column = 1, padx = 10, pady = 10)
+        label.grid(row = 0, column = 1, padx = 5, pady = 5)
   
         button1 = Button(self, text ="Home", command = lambda : controller.show_frame(Home))
-        button1.grid(row = 1, column = 1, padx = 10, pady = 10)
+        button1.grid(row = 1, column = 0, padx = 5, pady = 5)
   
         button2 = Button(self, text ="All Reviews", command = lambda : controller.show_frame(AllReviewsView))
-        button2.grid(row = 2, column = 1, padx = 10, pady = 10)
+        button2.grid(row = 2, column = 0, padx = 5, pady = 5)
 
         button3 = Button(self, text ="Employees View", command = lambda : controller.show_frame(EmployeesView))
-        button3.grid(row = 3, column = 1, padx = 10, pady = 10)
+        button3.grid(row = 3, column = 0, padx = 5, pady = 5)
 
-        button4 = Button(self, text ="Next Review", command = self.display_next_review)
-        button4.grid(row = 4, column = 4, padx = 10, pady = 10)
+        self.submit_button = Button(self, text ="Submit response", command = self.on_submit)
+        self.submit_button.grid(row = 4, column = 0, padx = 5, pady = 5)
+        self.submit_button["state"] = "disabled"
+
+        self.tl_assistance_button = Button(self, text ="TL assistance required", command = lambda : self.set_tl_assistance_required(True))
+        self.tl_assistance_button.grid(row =5, column = 0, padx = 5, pady = 5)
 
         self.reviewtext = StringVar()
         self.reviewtext.set("No review has been selected")
 
         self.reviewLabel= Label(self, textvariable=self.reviewtext, wraplength=600)
-        self.reviewLabel.grid(row = 1, column = 2, padx = 10, pady = 10)
+        self.reviewLabel.grid(row = 1, column = 1, padx = 10, pady = 10)
 
         self.responsetext = Text(self)
-        self.responsetext.grid(row = 2, column = 2, padx = 10, pady = 10)
+        self.responsetext.bind("<Key>", self.on_response_text_changed)
+        self.responsetext.grid(row = 2, column = 1, padx = 10, pady = 10)
+        self.display_next_review()
 
     def display_next_review(self):
-        text = self.service.get_next_review().get_body()
+        self.responsetext.delete("1.0", END)
+        review = self.service.get_next_review()
+        text = review.get_body()
+        self.current_review_id = review.get_id()
         self.reviewtext.set(text)
-        print(self.reviewtext)
 
+    def set_tl_assistance_required(self, tl_assistance_required):
+        self.service.set_tl_assistance_by_id(tl_assistance_required, self.current_review_id)
+        self.display_next_review()
+
+    def on_response_text_changed(self, value):
+        response = self.responsetext.get("1.0", END)
+        self.submit_button["state"] = "normal" if response else "disabled"
+        self.tl_assistance_button["state"] = "disabled" if response else "normal"
+
+    def on_submit(self):
+        self.service.add_response(Response(self.responsetext.get("1.0", END), None, self.user.get_id(), self.current_review_id))
+        self.service.set_review_status("CHECKED_OUT", self.user.get_id(), self.current_review_id)
+        self.display_next_review()
   
   
 class AllReviewsView(Frame):
-    def __init__(self, parent, controller, service):
+    def __init__(self, parent, controller, service, user):
         Frame.__init__(self, parent)
         self.service = service
+        self.user = user
 
         label = Label(self, text ="All Reviews", font = LARGEFONT)
         label.grid(row = 0, column = 1, padx = 10, pady = 10)
@@ -147,9 +174,10 @@ class AllReviewsView(Frame):
 
 
 class EmployeesView(Frame):
-    def __init__(self, parent, controller, service):
+    def __init__(self, parent, controller, service, user):
         Frame.__init__(self, parent)
         self.service = service
+        self.user = user
 
         label = Label(self, text ="Employees View", font = LARGEFONT)
         label.grid(row = 0, column = 1, padx = 10, pady = 10)
