@@ -137,14 +137,13 @@ class AllReviewsView(Frame):
         # set.heading("importance_score",text="IMPORTANCE",anchor=CENTER)
 
         reviews = list(service.get_all_test_reviews())
-        print(reviews[0])
 
         for index in range(len(reviews)):
             review = reviews[index]
             set.insert(parent='',index='end', iid=index, text='',
         values=(review.get_product_title(), review.get_star_rating(), review.get_status(), review.get_title(), 
         review.get_purchase_price(), review.get_created(), review.get_customer_id(), review.get_checked_out_user_id(), 
-        review.get_tl_assistance_required))
+        review.get_tl_assistance_required()))
 
 
 class EmployeesView(Frame):
@@ -153,7 +152,7 @@ class EmployeesView(Frame):
         self.service = service
 
         label = Label(self, text ="Employees View", font = LARGEFONT)
-        label.grid(row = 0, column = 4, padx = 10, pady = 10)
+        label.grid(row = 0, column = 1, padx = 10, pady = 10)
   
         button1 = Button(self, text ="Home", command = lambda : controller.show_frame(Home))
         button1.grid(row = 1, column = 1, padx = 10, pady = 10)
@@ -163,3 +162,29 @@ class EmployeesView(Frame):
 
         button3 = Button(self, text ="All Reviews", command = lambda : controller.show_frame(AllReviewsView))
         button3.grid(row = 3, column = 1, padx = 10, pady = 10)
+
+        set = ttk.Treeview(self)
+        set.grid(row = 1, column = 2, padx = 10, pady = 10)
+
+        set['columns']= ('id', 'name', 'email', 'join_date', 'is_tl')
+        set.column("#0", width=0,  stretch=NO)
+        set.column("id",anchor=CENTER, width=120)
+        set.column("name",anchor=CENTER, width=120)
+        set.column("email",anchor=CENTER, width=120)
+        set.column("join_date",anchor=CENTER, width=120)
+        set.column("is_tl",anchor=CENTER, width=120)
+
+        set.heading("#0",text="",anchor=CENTER)
+        set.heading("id",text="ID",anchor=CENTER)
+        set.heading("name",text="NAME",anchor=CENTER)
+        set.heading("email",text="EMAIL",anchor=CENTER)
+        set.heading("join_date",text="JOIN_DATE",anchor=CENTER)
+        set.heading("is_tl",text="IS_TL",anchor=CENTER)
+
+        employees = list(service.get_all_employees())
+
+        for index in range(len(employees)):
+            employee = employees[index]
+            set.insert(parent='',index='end', iid=index, text='',
+        values=(employee.get_id(), employee.get_name(), employee.get_email(), employee.get_join_date(), 
+        employee.get_is_tl()))

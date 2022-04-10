@@ -2,6 +2,8 @@ SELECT_ALL_REVIEWS = "SELECT * FROM review_clone_test"
 
 SELECT_ALL_USERS = "SELECT * FROM users"
 
+SELECT_ALL_EMPLOYEES = "SELECT * FROM employee"
+
 SELECT_ALL_TEST_REVIEWS = "SELECT * FROM review_clone_test"
 
 SELECT_NEXT_REVIEW = "SELECT * FROM review_clone_test WHERE status = 'NEW' ORDER BY importance_score desc LIMIT 1"

@@ -1,5 +1,6 @@
-from Persistence.queries import CALC_IMPORTANCE_VALUES, SELECT_NEXT_REVIEW, SELECT_REVIEW_BY_ID, SELECT_REVIEWS, SELECT_ALL_TEST_REVIEWS
+from Persistence.queries import CALC_IMPORTANCE_VALUES, SELECT_NEXT_REVIEW, SELECT_REVIEW_BY_ID, SELECT_ALL_TEST_REVIEWS, SELECT_ALL_EMPLOYEES
 from Persistence.Entities.review import Review
+from Persistence.Entities.employee import Employee
 
 class Service:
     
@@ -27,6 +28,10 @@ class Service:
 
     def get_importance_calc_values(self):
         reviews = self.repository.execute_query(CALC_IMPORTANCE_VALUES)
-        return map(lambda review: Review([0], review[1], review[2], review[3], 
+        return map(lambda review: Review(review[0], review[1], review[2], review[3], 
             review[4], review[5], review[6], review[7], review[8], 
             review[9], review[10], review[11], review[12]), reviews)
+
+    def get_all_employees(self):
+        employees = self.repository.execute_query(SELECT_ALL_EMPLOYEES)
+        return map(lambda employee: Employee(employee[0], employee[1], employee[2], employee[3], employee[4]), employees)
