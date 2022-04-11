@@ -49,3 +49,6 @@ class Service:
 
     def set_review_status(self, status, review_id, employee_id):
         self.repository.execute_command(SET_STATUS_BY_ID, (status, review_id, employee_id))
+
+    def add_coupon(self, value, response_id):
+        self.repository.execute_command(ADD_COUPON, (value, response_id))

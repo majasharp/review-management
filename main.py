@@ -22,35 +22,23 @@ def main ():
 
     app = tkinterApp(service, user)
     app.mainloop()
-   
 
-    #ignore below - Andrew playing
-''' reviews = list(service.get_importance_calc_values())
-    for index in range(len(reviews)):
-        review = reviews[index]
-        star_rating = review.get_star_rating()
-        print(star_rating)'''
+
+    #calculateImportanceScore()
   
 
     
 
 
 
-def close_positive_reviews(): #Sets review status to CLOSED if Star_rating > 3
+def close_positive_reviews(x): #Sets review status to CLOSED if Star_rating > 3
     reader = DataBaseConfigReader()
     config = reader.read_db_config('databaseconfig.json')
     repository = Repository(config)
 
-    for x in range(1, 250):
-        sql = "SELECT star_rating FROM review_clone_test WHERE id = (%s)"
-        val = (x,)
-
-        star_rating = repository.returnSingleRow(sql, val)
-        
-        if star_rating > 3:
-            sql = "UPDATE review_clone_test set status = 'CLOSED' where id = (%s)"
-            val = (x,)
-            repository.update_status_column(sql, val)
+    sql = "UPDATE review_clone_test set status = 'CLOSED' where id = (%s)"
+    val = (x,)
+    repository.update_status_column(sql, val)
 
 
 def calculateSentimentScore(x):
@@ -71,22 +59,15 @@ def calculateSentimentScore(x):
     return sentiment_score
  
 
-    #uncomment below to insert sentiment scores into DB column
-    '''SQL = "UPDATE review_clone_test SET sentiment_score = (%s) WHERE id = (%s)" #SQL query to run
-    val = (sentiment_score,x) #random sentiment score value to be inserted into sql query and row (x) in which to insert/update
-
-    repository.execute_command(SQL, val) #Send  sql and SS value to execute_command() in repository.py
-    repository.rmsdb.close()   '''
 
 
-
-def calculateImportanceScore(self, service):
+def calculateImportanceScore():
     #TODO - NEED MORE EFFICIENT WAY OF PULLING PREMIUM, STAR RATING, AND SENTIMENT_SCORE IN ONE GO, RATHER THAN INDIVIDUALLY
     # Need more efficient way of pulling premium, star_rating and sentiment_score in one, rather than individually
     reader = DataBaseConfigReader()
     config = reader.read_db_config('databaseconfig.json')
     repository = Repository(config)
-    self.service = service
+    #self.service = service
 
 
     
@@ -106,13 +87,15 @@ def calculateImportanceScore(self, service):
 
         #calculate SentimentScore
         sentiment_score = calculateSentimentScore(x)
-        print(sentiment_score)
+        #print(sentiment_score)
 
 
         if star_rating == 5:
             base_score = 0
+            close_positive_reviews(x) #closes this review - don't want to spend time responding to reviews >3 stars
         if star_rating == 4:
             base_score = 0
+            close_positive_reviews(x)
         if star_rating == 3:
             base_score = 1
         if star_rating == 2:
@@ -122,7 +105,7 @@ def calculateImportanceScore(self, service):
         
 
         #TODO - Importance_score not being calculated correctly, investigate...
-        if sentiment_score < 0: #converts sentiment_score to multiplier for calculating importance_score
+        if sentiment_score < -0.005: #NTLK considers compound score < -0.005 to be negative. Converts sentiment_score to multiplier for calculating importance_score
             sentiment_multiplier = abs(sentiment_score) + 1 #e.g. converts -0.335 to 1.335 
         else:
             sentiment_multiplier = 1 #if sentiment_score is positive, no multiplier

@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import ttk
 from Persistence.Entities.response import Response
+import random
+import string
  
 LARGEFONT =("Verdana", 25)
   
@@ -58,6 +60,9 @@ class NextReviewView(Frame):
         self.service = service
         self.user = user
         self.current_review_id = None
+        coupon_generated = FALSE
+        
+    
 
         label = Label(self, text ="Next Review View", font = LARGEFONT)
         label.grid(row = 0, column = 1, padx = 5, pady = 5)
@@ -71,8 +76,15 @@ class NextReviewView(Frame):
         button3 = Button(self, text ="Employees View", command = lambda : controller.show_frame(EmployeesView))
         button3.grid(row = 3, column = 0, padx = 5, pady = 5)
 
+        self.generate_coupon_button = Button(self, text = "Generate Coupon", command = self.on_coupon_click)
+        self.generate_coupon_button.grid(row = 6, column = 0, padx = 0, pady = 0)
+        #couponLabel = Label(self, text="Enter coupon amount in £")
+        #couponLabel.grid(row=6, column=1, padx = 10, pady = 0)
+        self.couponAmountText = Text(self, height = 1, width = 10)
+        self.couponAmountText.grid(row = 6, column = 1, padx = 5, pady = 5)
+
         self.submit_button = Button(self, text ="Submit response", command = self.on_submit)
-        self.submit_button.grid(row = 4, column = 0, padx = 5, pady = 5)
+        self.submit_button.grid(row = 4, column = 3, padx = 5, pady = 5)
         self.submit_button["state"] = "disabled"
 
         self.tl_assistance_button = Button(self, text ="TL assistance required", command = lambda : self.set_tl_assistance_required(True))
@@ -88,6 +100,11 @@ class NextReviewView(Frame):
         self.responsetext.bind("<Key>", self.on_response_text_changed)
         self.responsetext.grid(row = 2, column = 1, padx = 10, pady = 10)
         self.display_next_review()
+
+
+        
+    
+
 
     def display_next_review(self):
         self.responsetext.delete("1.0", END)
@@ -108,7 +125,21 @@ class NextReviewView(Frame):
     def on_submit(self):
         self.service.add_response(Response(self.responsetext.get("1.0", END), None, self.user.get_id(), self.current_review_id))
         self.service.set_review_status("CHECKED_OUT", self.user.get_id(), self.current_review_id)
+        #if NextReviewView.coupon_generated:
+            
         self.display_next_review()
+
+    def on_coupon_click(self):
+        NextReviewView.coupon_generated = TRUE
+        coupon_amount = self.couponAmountText.get("1.0",END)
+        #self.service.add_coupon(coupon_amount, self.current_review_id)
+        letters = string.ascii_lowercase
+        coupon_code = ''.join(random.choice(letters) for i in range(10)) #generates 10-character long random string as coupon code
+        self.coupon_code_label = Label(self, text="coupon code is: " + coupon_code)
+        self.coupon_code_label.grid(row = 7, column = 0, padx = 0, pady = 0)
+        
+    
+
   
   
 class AllReviewsView(Frame):
