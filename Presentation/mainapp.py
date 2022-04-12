@@ -85,11 +85,11 @@ class NextReviewView(Frame):
         button4.grid(row = 4, column = 0, padx = 5, pady = 5)
 
         self.generate_coupon_button = Button(self, text = "Generate Coupon", command = self.on_coupon_click)
-        self.generate_coupon_button.grid(row = 4, column = 0, padx = 0, pady = 0)
+        self.generate_coupon_button.grid(row = 2, column = 1, padx = 0, pady = 0)
         #couponLabel = Label(self, text="Enter coupon amount in £")
         #couponLabel.grid(row=6, column=1, padx = 10, pady = 0)
         self.couponAmountEntry = Entry(self)
-        self.couponAmountEntry.grid(row = 5, column = 1, padx = 5, pady = 5)
+        self.couponAmountEntry.grid(row = 3, column = 1, padx = 5, pady = 5)
 
         self.submit_button = Button(self, text ="Submit response", command = self.on_submit)
         self.submit_button.grid(row = 4, column = 3, padx = 5, pady = 5)
@@ -135,13 +135,11 @@ class NextReviewView(Frame):
         self.service.add_response(Response(self.responsetext.get("1.0", END), None, self.user.get_id(), self.current_review_id))
         #if self.coupon_generated:
         #    response_id = self.service.get_response_id(self.current_review_id)
-
-            
         self.display_next_review()
 
     def on_coupon_click(self):
         self.coupon_generated = TRUE
-        coupon_amount = int(self.couponAmountText.get("1.0",END))
+        coupon_amount = int(self.couponAmountEntry.get("1.0",END))
 
         letters = string.ascii_lowercase
         coupon_code = ''.join(random.choice(letters) for i in range(10)) #generates 10-character long random string as coupon code
