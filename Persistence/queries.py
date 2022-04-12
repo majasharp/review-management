@@ -17,3 +17,7 @@ SELECT_REVIEW_BY_ID = "SELECT * FROM review_clone_test WHERE id = %s"
 UPDATE_STATUS = "ALTER TABLE review_clone_test set status = 'closed' where id = %s"
 
 CALC_IMPORTANCE_VALUES = "SELECT r.star_rating, c.premier FROM review_clone_test r INNER JOIN customer c where c.id = r.customer_id"
+
+SELECT_RESPONSE_ID_BY_REVIEW_ID = "SELECT id FROM response WHERE review_id = %s"
+
+GET_COUPON_ID_WITH_COUPON_CODE = "SELECT id FROM coupon WHERE coupon_code = %s"

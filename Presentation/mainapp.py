@@ -60,7 +60,8 @@ class NextReviewView(Frame):
         self.service = service
         self.user = user
         self.current_review_id = None
-        coupon_generated = FALSE
+        self.coupon_generated = FALSE
+        self.coupon_id = None
         
     
 
@@ -125,18 +126,22 @@ class NextReviewView(Frame):
     def on_submit(self):
         self.service.add_response(Response(self.responsetext.get("1.0", END), None, self.user.get_id(), self.current_review_id))
         self.service.set_review_status("CHECKED_OUT", self.user.get_id(), self.current_review_id)
-        #if NextReviewView.coupon_generated:
+        #if self.coupon_generated:
+        #    response_id = self.service.get_response_id(self.current_review_id)
+
             
         self.display_next_review()
 
     def on_coupon_click(self):
-        NextReviewView.coupon_generated = TRUE
+        self.coupon_generated = TRUE
         coupon_amount = self.couponAmountText.get("1.0",END)
-        #self.service.add_coupon(coupon_amount, self.current_review_id)
+
         letters = string.ascii_lowercase
         coupon_code = ''.join(random.choice(letters) for i in range(10)) #generates 10-character long random string as coupon code
+        self.service.create_coupon(coupon_code, coupon_amount, type)
         self.coupon_code_label = Label(self, text="coupon code is: " + coupon_code)
         self.coupon_code_label.grid(row = 7, column = 0, padx = 0, pady = 0)
+        self.coupon_id = self.service.get_coupon_id(coupon_code)
         
     
 
