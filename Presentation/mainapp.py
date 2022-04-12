@@ -62,8 +62,6 @@ class NextReviewView(Frame):
         self.current_review_id = None
         self.coupon_generated = FALSE
         self.coupon_id = None
-        
-    
 
         label = Label(self, text ="Next Review View", font = LARGEFONT)
         label.grid(row = 0, column = 1, padx = 5, pady = 5)
@@ -138,10 +136,13 @@ class NextReviewView(Frame):
 
         letters = string.ascii_lowercase
         coupon_code = ''.join(random.choice(letters) for i in range(10)) #generates 10-character long random string as coupon code
-        self.service.create_coupon(coupon_code, coupon_amount, type)
+        self.service.create_coupon(coupon_code, coupon_amount)
         self.coupon_code_label = Label(self, text="coupon code is: " + coupon_code)
         self.coupon_code_label.grid(row = 7, column = 0, padx = 0, pady = 0)
+
         self.coupon_id = self.service.get_coupon_id(coupon_code)
+        print('coupon code is: ' + coupon_code)
+        print('coupon id is: ' + str(self.coupon_id)) #RETURNING AS NONE?...
         
     
 

@@ -20,4 +20,4 @@ CALC_IMPORTANCE_VALUES = "SELECT r.star_rating, c.premier FROM review_clone_test
 
 SELECT_RESPONSE_ID_BY_REVIEW_ID = "SELECT id FROM response WHERE review_id = %s"
 
-GET_COUPON_ID_WITH_COUPON_CODE = "SELECT id FROM coupon WHERE coupon_code = %s"
+GET_COUPON_ID_WITH_COUPON_CODE = "SELECT id FROM coupon WHERE coupon_code = %s" #Try putting '' around %s and see error message it throws back - unsure of solution
