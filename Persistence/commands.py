@@ -11,3 +11,5 @@ ADD_COUPON_INITIAL = "INSERT INTO coupon (coupon_code, coupon_type, coupon_value
 
 UPDATE_COUPON_WITH_RESPONSEID = "UPDATE coupon SET response_id = %s WHERE id = %s"
 
+ADD_TEMPLATE = "INSERT INTO template (body, last_edited_user_id) VALUES (%s, %s)"
+

@@ -14,7 +14,10 @@ class Repository:
         self.cursor = self.rmsdb.cursor()
 
     def execute_query(self, query, val=None):
-        self.cursor.execute(query, val)
+        if val:
+            self.cursor.execute(query, val)
+        else:
+            self.cursor.execute(query)
         return self.cursor.fetchall() 
 
     def execute_command(self, query, val): #For inserting values into DB
