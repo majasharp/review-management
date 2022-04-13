@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from Persistence.Entities.response import Response
 from Persistence.Entities.template import Template
+from Persistence.Entities.coupon import Coupon
 import random
 import string
 
@@ -66,11 +67,7 @@ class NextReviewView(Frame):
         Frame.__init__(self, parent)
         self.service = service
         self.user = user
-        self.current_review_id = None
-        self.coupon_generated = FALSE
-        self.coupon_id = None
-        self.coupon_code = ""
-
+        
         label = Label(self, text ="Next Review View", font = LARGEFONT)
         label.grid(row = 0, column = 1, padx = 5, pady = 5)
   
@@ -86,10 +83,18 @@ class NextReviewView(Frame):
         button4 = Button(self, text ="Create New Template", command = lambda : controller.show_frame(CreateTemplateView))
         button4.grid(row = 4, column = 0, padx = 5, pady = 5)
 
-        self.generate_coupon_button = Button(self, text = "Generate Coupon", command = self.on_coupon_click)
+        self.coupon_amount_text = Text(self, height = 1, width = 10)
+        self.coupon_amount_text.bind("<Key>", self.on_coupon_value_changed)
+        self.coupon_amount_text.grid(row = 8, column = 0, padx = 5, pady = 5)
+
+        self.generate_coupon_button = Button(self, text = "Generate Coupon", command = self.on_coupon_create)
         self.generate_coupon_button.grid(row = 7, column = 0, padx = 0, pady = 0)
-        self.couponAmountEntry = Text(self, height = 1, width = 10)
-        self.couponAmountEntry.grid(row = 8, column = 0, padx = 5, pady = 5)
+        self.generate_coupon_button["state"] = "disabled"
+
+        self.coupon_code_text = StringVar()
+
+        self.coupon_code_label= Label(self, textvariable=self.coupon_code_text, wraplength=100)
+        self.coupon_code_label.grid(row = 9, column = 0, padx = 0, pady = 0)
 
         self.submit_button = Button(self, text ="Submit response", command = self.on_submit)
         self.submit_button.grid(row = 4, column = 3, padx = 5, pady = 5)
@@ -114,8 +119,6 @@ class NextReviewView(Frame):
         self.display_next_review()
 
 
-
-
     def display_next_review(self):
         self.responsetext.delete("1.0", END)
         review = self.service.get_next_review()
@@ -134,33 +137,27 @@ class NextReviewView(Frame):
         self.submit_button["state"] = "normal" if response else "disabled"
         self.tl_assistance_button["state"] = "disabled" if response else "normal"
 
-    def on_submit(self):
-        self.service.add_response(Response(self.responsetext.get("1.0", END), None, self.user.get_id(), self.current_review_id))
-        '''if self.coupon_generated:
-            response_id = self.service.get_response_id(self.current_review_id)
-            self.coupon_id = self.service.get_coupon_id(self.coupon_code) 
-            print('coupon code is: ' + self.coupon_code)
-            print('coupon id is: ' + str(self.coupon_id)) 
-            self.service.update_coupon(response_id, self.coupon_id)'''
-        self.display_next_review()
+    def on_coupon_value_changed(self, value):
+        coupon_amount = self.coupon_amount_text.get("1.0", END)
+        self.generate_coupon_button["state"] = "normal" if coupon_amount else "disabled"
 
-    def on_coupon_click(self):
-        print(self.coupon_generated)
-        self.coupon_generated = TRUE
-        coupon_amount = self.couponAmountEntry.get("1.0",END)
-        print(self.coupon_generated)
+    def on_submit(self):
+        self.current_response_id = self.service.add_response(Response(self.responsetext.get("1.0", END), None, self.user.get_id(), self.current_review_id))
+
+        if self.current_coupon_code != None:
+            self.service.update_coupon(self.current_coupon_code, self.current_response_id)
+        self.display_next_review()
+        self.coupon_code_text.set("")
+
+    def on_coupon_create(self):
         letters = string.ascii_lowercase
-        self.coupon_code = ''.join(random.choice(letters) for i in range(10)) #generates 10-character long random string as coupon code
-        
-        try: #Error handling for if a non-int is entered as coupon value
-            self.service.create_coupon(self.coupon_code, coupon_amount)
-            self.coupon_code_label = Label(self, text="coupon code is: " + self.coupon_code)
+        self.current_coupon_code = ''.join(random.choice(letters) for i in range(10))
+
+        try: 
+            self.service.add_coupon(Coupon(self.current_coupon_code, "Pound", int(self.coupon_amount_text.get("1.0",END))))
+            self.coupon_code_text.set("Coupon code is: " + self.current_coupon_code)
         except:
-            self.coupon_code_label = Label(self, text="You must enter a number as a coupon value")
-        self.coupon_code_label.grid(row = 9, column = 0, padx = 0, pady = 0)
-        
-        print('coupon code is: ' + self.coupon_code)
-        print('coupon id is: ' + str(self.coupon_id)) #RETURNING AS NONE?...
+            self.coupon_code_text.set("You must enter a number as a coupon value")
         
     
   
@@ -305,22 +302,24 @@ class CreateTemplateView(Frame):
         self.create_button["state"] = "disabled"
 
         self.templatetitle = Text(self, height = 1, width = 30)
+        self.templatetitle.bind("<Key>", self.on_template_changed)
         self.templatetitle.grid(row = 5, column = 3, padx = 5, pady = 5)
 
-
         self.templatetext = Text(self)
-        self.templatetext.bind("<Key>", self.on_template_text_changed)
+        self.templatetext.bind("<Key>", self.on_template_changed)
         self.templatetext.place(
             x = 150,
             y = 250,
             width=1000,
             height=300)
 
-    def on_template_text_changed(self, value):
+    def on_template_changed(self, value):
+        template_title = self.templatetitle.get("1.0", END)
         template = self.templatetext.get("1.0", END)
-        self.create_button["state"] = "normal" if template else "disabled"
+        self.create_button["state"] = "normal" if template and template_title else "disabled"
+
 
     def on_create_template(self):
-        self.service.add_template(Template(self.templatetext.get("1.0", END), self.user.get_id()))
+        self.service.add_template(Template(self.templatetitle.get("1.0", END), self.templatetext.get("1.0", END), self.user.get_id()))
         self.controller.show_frame(Home) 
 

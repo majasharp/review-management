@@ -45,16 +45,16 @@ class Service:
         self.repository.execute_command(SET_TL_ASSISTANCE_REQUIRED_BY_ID, (tl_assistance_required, review_id))
 
     def add_response(self, response):
-        self.repository.execute_command(ADD_RESPONSE, (response.get_body(), response.get_coupon_id(), response.get_employee_id(), response.get_review_id()))
+        return self.repository.execute_command(ADD_RESPONSE, (response.get_body(), response.get_coupon_id(), response.get_employee_id(), response.get_review_id()))
 
     def set_review_status(self, status, review_id, employee_id):
         self.repository.execute_command(SET_STATUS_BY_ID, (status, review_id, employee_id))
 
-    def create_coupon(self, code, value):
-        self.repository.execute_command(ADD_COUPON_INITIAL, (code, value))
+    def add_coupon(self, coupon):
+        self.repository.execute_command(ADD_COUPON_INITIAL, (coupon.get_code(), coupon.get_type(), coupon.get_value()))
 
-    def update_coupon(self, response_id, coupon_id):
-        self.repository.execute_command(UPDATE_COUPON_WITH_RESPONSE_ID, (response_id, coupon_id))
+    def update_coupon(self, coupon_code, response_id):
+        self.repository.execute_command(UPDATE_COUPON_WITH_RESPONSE_ID, (response_id, coupon_code))
 
     def get_coupon_id(self, code):
         self.repository.execute_query(GET_COUPON_ID_WITH_COUPON_CODE, (code,))
@@ -63,4 +63,4 @@ class Service:
         self.repository.execute_query(SELECT_RESPONSE_ID_BY_REVIEW_ID, (review_id,))
 
     def add_template(self, template):
-        self.repository.execute_command(ADD_TEMPLATE, (template.get_body(), template.get_last_edited_user_id())) 
+        self.repository.execute_command(ADD_TEMPLATE, (template.get_title(), template.get_body(), template.get_last_edited_user_id())) 

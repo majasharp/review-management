@@ -24,6 +24,7 @@ class Repository:
     def execute_command(self, query, val): #For inserting values into DB
         self.cursor.execute(query, val)
         self.rmsdb.commit()
+        return self.cursor.lastrowid
 
 
     def returnSingleRow (self, query, val):
