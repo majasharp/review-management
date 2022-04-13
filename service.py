@@ -59,7 +59,8 @@ class Service:
     def get_coupon_id(self, code):
         self.repository.execute_query(GET_COUPON_ID_WITH_COUPON_CODE, (code,))
 
-
-
     def get_response_id(self, review_id):
         self.repository.execute_query(SELECT_RESPONSE_ID_BY_REVIEW_ID, (review_id,))
+
+    def add_template(self, template):
+        self.repository.execute_command(ADD_TEMPLATE, (template.get_body(), template.get_last_edited_user_id()))
