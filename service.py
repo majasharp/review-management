@@ -53,8 +53,8 @@ class Service:
     def create_coupon(self, code, value):
         self.repository.execute_command(ADD_COUPON_INITIAL, (code, value))
 
-    def update_coupon(self, response_id):
-        self.repository.execute_command(UPDATE_COUPON_WITH_RESPONSE_ID, (response_id,))
+    def update_coupon(self, response_id, coupon_id):
+        self.repository.execute_command(UPDATE_COUPON_WITH_RESPONSE_ID, (response_id, coupon_id))
 
     def get_coupon_id(self, code):
         self.repository.execute_query(GET_COUPON_ID_WITH_COUPON_CODE, (code,))
@@ -63,4 +63,4 @@ class Service:
         self.repository.execute_query(SELECT_RESPONSE_ID_BY_REVIEW_ID, (review_id,))
 
     def add_template(self, template):
-        self.repository.execute_command(ADD_TEMPLATE, (template.get_body(), template.get_last_edited_user_id()))
+        self.repository.execute_command(ADD_TEMPLATE, (template.get_body(), template.get_last_edited_user_id())) 

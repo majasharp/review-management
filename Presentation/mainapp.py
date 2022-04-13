@@ -68,7 +68,8 @@ class NextReviewView(Frame):
         self.user = user
         self.current_review_id = None
         self.coupon_generated = FALSE
-        self.coupon_id = 0
+        self.coupon_id = None
+        self.coupon_code = ""
 
         label = Label(self, text ="Next Review View", font = LARGEFONT)
         label.grid(row = 0, column = 1, padx = 5, pady = 5)
@@ -86,11 +87,9 @@ class NextReviewView(Frame):
         button4.grid(row = 4, column = 0, padx = 5, pady = 5)
 
         self.generate_coupon_button = Button(self, text = "Generate Coupon", command = self.on_coupon_click)
-        self.generate_coupon_button.grid(row = 2, column = 1, padx = 0, pady = 0)
-        #couponLabel = Label(self, text="Enter coupon amount in £")
-        #couponLabel.grid(row=6, column=1, padx = 10, pady = 0)
-        self.couponAmountEntry = Entry(self)
-        self.couponAmountEntry.grid(row = 3, column = 1, padx = 5, pady = 5)
+        self.generate_coupon_button.grid(row = 7, column = 0, padx = 0, pady = 0)
+        self.couponAmountEntry = Text(self, height = 1, width = 10)
+        self.couponAmountEntry.grid(row = 8, column = 0, padx = 5, pady = 5)
 
         self.submit_button = Button(self, text ="Submit response", command = self.on_submit)
         self.submit_button.grid(row = 4, column = 3, padx = 5, pady = 5)
@@ -114,6 +113,9 @@ class NextReviewView(Frame):
             height=300)
         self.display_next_review()
 
+
+
+
     def display_next_review(self):
         self.responsetext.delete("1.0", END)
         review = self.service.get_next_review()
@@ -134,21 +136,30 @@ class NextReviewView(Frame):
 
     def on_submit(self):
         self.service.add_response(Response(self.responsetext.get("1.0", END), None, self.user.get_id(), self.current_review_id))
-        #if self.coupon_generated:
-        #    response_id = self.service.get_response_id(self.current_review_id)
+        '''if self.coupon_generated:
+            response_id = self.service.get_response_id(self.current_review_id)
+            self.coupon_id = self.service.get_coupon_id(self.coupon_code) 
+            print('coupon code is: ' + self.coupon_code)
+            print('coupon id is: ' + str(self.coupon_id)) 
+            self.service.update_coupon(response_id, self.coupon_id)'''
         self.display_next_review()
 
     def on_coupon_click(self):
+        print(self.coupon_generated)
         self.coupon_generated = TRUE
-        coupon_amount = int(self.couponAmountEntry.get("1.0",END))
-
+        coupon_amount = self.couponAmountEntry.get("1.0",END)
+        print(self.coupon_generated)
         letters = string.ascii_lowercase
-        coupon_code = ''.join(random.choice(letters) for i in range(10)) #generates 10-character long random string as coupon code
-        self.service.create_coupon(coupon_code, coupon_amount)
-        self.coupon_code_label = Label(self, text="coupon code is: " + coupon_code)
-        self.coupon_code_label.grid(row = 7, column = 0, padx = 0, pady = 0)
-        self.coupon_id = self.service.get_coupon_id(coupon_code) 
-        print('coupon code is: ' + coupon_code)
+        self.coupon_code = ''.join(random.choice(letters) for i in range(10)) #generates 10-character long random string as coupon code
+        
+        try: #Error handling for if a non-int is entered as coupon value
+            self.service.create_coupon(self.coupon_code, coupon_amount)
+            self.coupon_code_label = Label(self, text="coupon code is: " + self.coupon_code)
+        except:
+            self.coupon_code_label = Label(self, text="You must enter a number as a coupon value")
+        self.coupon_code_label.grid(row = 9, column = 0, padx = 0, pady = 0)
+        
+        print('coupon code is: ' + self.coupon_code)
         print('coupon id is: ' + str(self.coupon_id)) #RETURNING AS NONE?...
         
     
@@ -293,11 +304,15 @@ class CreateTemplateView(Frame):
         self.create_button.grid(row = 4, column = 3, padx = 5, pady = 5)
         self.create_button["state"] = "disabled"
 
+        self.templatetitle = Text(self, height = 1, width = 30)
+        self.templatetitle.grid(row = 5, column = 3, padx = 5, pady = 5)
+
+
         self.templatetext = Text(self)
         self.templatetext.bind("<Key>", self.on_template_text_changed)
         self.templatetext.place(
             x = 150,
-            y = 200,
+            y = 250,
             width=1000,
             height=300)
 

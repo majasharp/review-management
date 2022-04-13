@@ -13,16 +13,11 @@ class Repository:
 
         self.cursor = self.rmsdb.cursor()
 
-<<<<<<< HEAD
-    def execute_query(self, query, val = None):
-        self.cursor.execute(query, val)
-=======
     def execute_query(self, query, val=None):
         if val:
             self.cursor.execute(query, val)
         else:
             self.cursor.execute(query)
->>>>>>> 18fdc8c31e6ed47539c52567ea60661b73e8ec55
         return self.cursor.fetchall() 
 
 
