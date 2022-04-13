@@ -3,6 +3,7 @@ from tkinter import ttk
 from Persistence.Entities.response import Response
 import random
 import string
+
  
 LARGEFONT =("Verdana", 25)
   
@@ -61,7 +62,7 @@ class NextReviewView(Frame):
         self.user = user
         self.current_review_id = None
         self.coupon_generated = FALSE
-        self.coupon_id = None
+        self.coupon_id = 0
 
         label = Label(self, text ="Next Review View", font = LARGEFONT)
         label.grid(row = 0, column = 1, padx = 5, pady = 5)
@@ -139,8 +140,7 @@ class NextReviewView(Frame):
         self.service.create_coupon(coupon_code, coupon_amount)
         self.coupon_code_label = Label(self, text="coupon code is: " + coupon_code)
         self.coupon_code_label.grid(row = 7, column = 0, padx = 0, pady = 0)
-
-        self.coupon_id = self.service.get_coupon_id(coupon_code)
+        self.coupon_id = self.service.get_coupon_id(coupon_code) 
         print('coupon code is: ' + coupon_code)
         print('coupon id is: ' + str(self.coupon_id)) #RETURNING AS NONE?...
         

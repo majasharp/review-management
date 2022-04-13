@@ -9,5 +9,5 @@ SET_STATUS_BY_ID = "UPDATE review_clone_test SET status = %s, checked_out_user =
 
 ADD_COUPON_INITIAL = "INSERT INTO coupon (coupon_code, coupon_type, coupon_value) VALUES (%s, 'pound', %s)"
 
-UPDATE_COUPON_WITH_RESPONSEID = "UPDATE coupon SET response_id = %s WHERE id = %s"
+UPDATE_COUPON_WITH_RESPONSE_ID = "UPDATE coupon SET response_id = %s WHERE id = %s"
 

@@ -54,7 +54,7 @@ class Service:
         self.repository.execute_command(ADD_COUPON_INITIAL, (code, value))
 
     def update_coupon(self, response_id):
-        self.repository.execute_command(UPDATE_COUPON_WITH_RESPONSEID)
+        self.repository.execute_command(UPDATE_COUPON_WITH_RESPONSE_ID, (response_id,))
 
     def get_coupon_id(self, code):
         self.repository.execute_query(GET_COUPON_ID_WITH_COUPON_CODE, (code,))
