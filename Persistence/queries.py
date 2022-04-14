@@ -23,3 +23,7 @@ CALC_IMPORTANCE_VALUES = "SELECT r.star_rating, c.premier FROM review_clone_test
 SELECT_RESPONSE_ID_BY_REVIEW_ID = "SELECT id FROM response WHERE review_id = %s"
 
 GET_COUPON_ID_WITH_COUPON_CODE = "SELECT id FROM coupon WHERE coupon_code = %s"
+
+SELECT_ALL_TEMPLATE_TITLES = "SELECT title FROM template"
+
+SELECT_TEMPLATE_BY_TITLE = "SELECT * FROM template WHERE title = %s"

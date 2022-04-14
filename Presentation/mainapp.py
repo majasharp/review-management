@@ -122,6 +122,16 @@ class NextReviewView(Frame):
         self.responsetext = Text(self)
         self.responsetext.bind("<Key>", self.on_response_text_changed)
         self.responsetext.grid(row = 4, column = 1, padx = 5, pady = 5)
+
+        self.chosentemplatetitle = StringVar()
+        self.chosentemplatetitle.set(list(self.get_template_titles())[0])
+
+        self.templatedropdown = OptionMenu(self, self.chosentemplatetitle, *list(self.get_template_titles()))
+        self.templatedropdown.grid(row = 11, column = 0, padx = 5, pady = 5)
+
+        self.templateapplybutton = Button(self, text ="Apply Template", command = self.apply_template)
+        self.templateapplybutton.grid(row = 12, column = 0, padx = 5, pady = 5)
+
         self.display_next_review()
 
 
@@ -171,6 +181,14 @@ class NextReviewView(Frame):
             self.coupon_code_text.set("Coupon code is: " + self.current_coupon_code)
         except:
             self.coupon_code_text.set("You must enter a number as a coupon value")
+
+    def get_template_titles(self):
+        return self.service.get_template_titles()
+
+    def apply_template(self):
+        self.responsetext.delete("1.0", END)
+        template = self.service.get_template_by_title(self.chosentemplatetitle.get())
+        self.responsetext.insert(END, template.get_body())
         
     
   

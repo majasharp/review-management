@@ -3,6 +3,7 @@ from Persistence.commands import *
 from Persistence.Entities.review import Review
 from Persistence.Entities.employee import Employee
 from Persistence.Entities.customer import Customer
+from Persistence.Entities.template import Template
 
 class Service:
     
@@ -65,6 +66,14 @@ class Service:
 
     def add_template(self, template):
         self.repository.execute_command(ADD_TEMPLATE, (template.get_title(), template.get_body(), template.get_last_edited_user_id())) 
+
+    def get_template_titles(self):
+        titles = self.repository.execute_query(SELECT_ALL_TEMPLATE_TITLES)
+        return map(lambda title : title[0], titles)
+
+    def get_template_by_title(self, template_title):
+        template = self.repository.execute_query(SELECT_TEMPLATE_BY_TITLE, (template_title,))[0]
+        return Template(template[1], template[2], template[3], template[0])
 
     def get_customer_by_id(self, customer_id):
         customer = self.repository.execute_query(SELECT_CUSTOMER_BY_ID, (customer_id,))[0]
