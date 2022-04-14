@@ -1,4 +1,5 @@
 from Persistence.Entities.user import User
+
 class Employee(User):
     def __init__(self, id, name, email, join_date, is_tl):
         super().__init__(id, name, email, join_date)
