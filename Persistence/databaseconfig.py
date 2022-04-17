@@ -26,7 +26,7 @@ class DataBaseConfig:
 
 class DataBaseConfigReader:
 
-    def read_db_config(self, filePath):
+    def deserialize(self, filePath):
         file = open(filePath)
         data = json.load(file)
 

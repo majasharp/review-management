@@ -5,22 +5,23 @@ from Persistence.databaseconfig import DataBaseConfigReader
 from Persistence.repository import Repository
 from Persistence.queries import SELECT_ALL_REVIEWS, SELECT_ALL_TEST_REVIEWS, SELECT_ALL_USERS
 from service import Service
-from login import EMPLOYEE_ID
 from nltk.sentiment import SentimentIntensityAnalyzer
-
+from mailconfig import MailConfigReader
+from mailservice import MailService
 
 
 
 def main ():
-    reader = DataBaseConfigReader()
-    config = reader.read_db_config('databaseconfig.json')
-    repository = Repository(config)
+    dbReader = DataBaseConfigReader()
+    emailReader = MailConfigReader()
+    dbConfig = dbReader.deserialize('config.json')
+    mailConfig = emailReader.deserialize('config.json')
+    repository = Repository(dbConfig)
 
-    service = Service(repository)
-    user = service.get_employee_by_id(EMPLOYEE_ID)
-    
+    mail = MailService(mailConfig)
+    service = Service(repository, mail)    
 
-    app = tkinterApp(service, user)
+    app = tkinterApp(service)
     app.mainloop()
 
 

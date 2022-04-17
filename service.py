@@ -4,11 +4,13 @@ from Persistence.Entities.review import Review
 from Persistence.Entities.employee import Employee
 from Persistence.Entities.customer import Customer
 from Persistence.Entities.template import Template
+import asyncio
 
 class Service:
     
-    def __init__(self, repository):
+    def __init__(self, repository, mail):
         self.repository = repository
+        self.mail = mail
 
     def get_next_review(self):
         nextReview = self.repository.execute_query(SELECT_NEXT_REVIEW)[0]
@@ -16,8 +18,8 @@ class Service:
             nextReview[4], nextReview[5], nextReview[6], nextReview[7], nextReview[8], 
             nextReview[9], nextReview[10], nextReview[11], nextReview[12])
 
-    def get_all_test_reviews(self):
-        reviews = self.repository.execute_query(SELECT_ALL_TEST_REVIEWS)
+    def get_all_active_reviews(self):
+        reviews = self.repository.execute_query(SELECT_ACTIVE_REVIEWS)
         return map(lambda review: Review(review[0], review[1], review[2], review[3], 
             review[4], review[5], review[6], review[7], review[8], 
             review[9], review[10], review[11], review[12]), reviews)
@@ -28,6 +30,12 @@ class Service:
         return Review(review[0], review[1], review[2], review[3], 
             review[4], review[5], review[6], review[7], review[8], 
             review[9], review[10], review[11], review[12])
+
+    def get_tl_required_reviews(self):
+        reviews = self.repository.execute_query(SELECT_TL_REQUIRED_REVIEWS)
+        return map(lambda review: Review(review[0], review[1], review[2], review[3], 
+            review[4], review[5], review[6], review[7], review[8], 
+            review[9], review[10], review[11], review[12]), reviews) 
 
     def get_importance_calc_values(self):
         reviews = self.repository.execute_query(CALC_IMPORTANCE_VALUES)
@@ -43,14 +51,18 @@ class Service:
         employee = self.repository.execute_query(SELECT_EMPLOYEE_BY_ID, (employee_id,))[0]
         return Employee(employee[0], employee[1], employee[2], employee[3], employee[4])
 
-    def set_tl_assistance_by_id(self, tl_assistance_required, review_id):
-        self.repository.execute_command(SET_TL_ASSISTANCE_REQUIRED_BY_ID, (tl_assistance_required, review_id))
+    def set_tl_assistance_by_id(self, tl_assistance_required, checked_out_user, review_id):
+        self.repository.execute_command(SET_TL_ASSISTANCE_REQUIRED_BY_ID, (tl_assistance_required, checked_out_user, review_id))
+
+    def set_close_or_check(self, status, review_id):
+        self.repository.execute_command(SET_CLOSE_OR_MANUAL_CHECK_BY_ID, (status, review_id))
 
     def add_response(self, response):
-        return self.repository.execute_command(ADD_RESPONSE, (response.get_body(), response.get_coupon_id(), response.get_employee_id(), response.get_review_id()))
+        result = self.repository.execute_command(ADD_RESPONSE, (response.get_body(), response.get_coupon_id(), response.get_employee_id(), response.get_review_id()))
+        return result
 
-    def set_review_status(self, status, review_id, employee_id):
-        self.repository.execute_command(SET_STATUS_BY_ID, (status, review_id, employee_id))
+    def set_review_checked_out(self, status, review_id, employee_id):
+        self.repository.execute_command(SET_CHECKED_OUT_BY_ID, (status, review_id, employee_id))
 
     def add_coupon(self, coupon):
         self.repository.execute_command(ADD_COUPON_INITIAL, (coupon.get_code(), coupon.get_type(), coupon.get_value()))
@@ -78,3 +90,24 @@ class Service:
     def get_customer_by_id(self, customer_id):
         customer = self.repository.execute_query(SELECT_CUSTOMER_BY_ID, (customer_id,))[0]
         return Customer(customer[0], customer[1], customer[2], customer[3], customer[4])
+
+    def update_template(self, template_body, last_edited_user_id, template_title):
+        self.repository.execute_command(UPDATE_TEMPLATE, (template_body, last_edited_user_id, template_title))
+
+    def send_email(self, review, response, customer):
+        msg = "Dear " + customer.get_name() + ",\n\n" \
+        + "We are grateful that you took the time out to leave us a review. Your feedback helps us to improve service for everyone. We have shared this with the team to let them know how we are doing. " \
+        + "\n Our customer service representative has responded." \
+        + "\n\n Your review:\n\n\n" \
+        + review \
+        + "\n\n Our response:\n\n\n" \
+        + response.get_body()
+
+        self.__fire_and_forget(lambda: self.mail.send_mail(msg, customer.get_email()))
+
+    def __fire_and_forget(self, task, *args, **kwargs):
+        loop = asyncio.get_event_loop()
+        if callable(task):
+            return loop.run_in_executor(None, task, *args, **kwargs)
+        else:    
+            raise TypeError('Task must be a callable')
