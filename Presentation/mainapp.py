@@ -25,7 +25,7 @@ class tkinterApp(Tk):
   
         self.frames = {} 
   
-        for F in (Home, NextReviewView, AllReviewsView, EmployeesView, CreateTemplateView):
+        for F in (Home, NextReviewView, AllReviewsView, EmployeesView, CreateTemplateView, ):
             frame = F(container, self, service, user)
             self.frames[F] = frame
             frame.grid(row = 0, column = 0, sticky ="nsew")
@@ -34,6 +34,11 @@ class tkinterApp(Tk):
     def show_frame(self, cont):
         frame = self.frames[cont]
         frame.tkraise()
+
+class TLRequiredReviewsView(Frame):
+    def __init__(self, parent, controller, service, user):
+        Frame.__init__(self, parent)
+            
 
 
 class Home(Frame):
@@ -45,22 +50,13 @@ class Home(Frame):
         label = Label(self, text ="Constella Review Management", font = LARGEFONT)
         label.grid(row = 0, column = 1, padx = 5, pady = 5)
   
-        button1 = Button(self, text ="Next Review",
-        command = lambda : controller.show_frame(NextReviewView))
-        button1.grid(row = 1, column = 0, padx = 5, pady = 5)
-  
-        button2 = Button(self, text ="All Reviews",
-        command = lambda : controller.show_frame(AllReviewsView))
-        button2.grid(row = 2, column = 0, padx = 5, pady = 5)
+        PopulateMenu(Home, controller,self, 1)
 
-        button3 = Button(self, text ="Employee View",
-        command = lambda : controller.show_frame(EmployeesView))
-        button3.grid(row = 3, column = 0, padx = 5, pady = 5)
+        
+        button5 = Button(self, text ="TL Required Reviews", 
+        command = lambda : controller.show_frame(TLRequiredReviewsView))
+        button5.grid(row = 6, column = 0, padx = 5, pady = 5)
 
-        button4 = Button(self, text ="Create New Template", 
-        command = lambda : controller.show_frame(CreateTemplateView))
-        button4.grid(row = 4, column = 0, padx = 5, pady = 5)
-  
           
 class NextReviewView(Frame):
     def __init__(self, parent, controller, service, user):
@@ -68,20 +64,10 @@ class NextReviewView(Frame):
         self.service = service
         self.user = user
         
-        label = Label(self, text ="Next Review View", font = LARGEFONT)
+        label = Label(self, text ="Next Review", font = LARGEFONT)
         label.grid(row = 0, column = 1, padx = 5, pady = 5)
   
-        button1 = Button(self, text ="Home", command = lambda : controller.show_frame(Home))
-        button1.grid(row = 2, column = 0, padx = 5, pady = 5)
-  
-        button2 = Button(self, text ="All Reviews", command = lambda : controller.show_frame(AllReviewsView))
-        button2.grid(row = 3, column = 0, padx = 5, pady = 5)
-
-        button3 = Button(self, text ="Employees View", command = lambda : controller.show_frame(EmployeesView))
-        button3.grid(row = 4, column = 0, padx = 5, pady = 5)
-
-        button4 = Button(self, text ="Create New Template", command = lambda : controller.show_frame(CreateTemplateView))
-        button4.grid(row = 5, column = 0, padx = 5, pady = 5)
+        PopulateMenu(NextReviewView, controller,self, 2)
 
         self.coupon_amount_text = Text(self, height = 1, width = 10)
         self.coupon_amount_text.bind("<Key>", self.on_coupon_value_changed)
@@ -201,60 +187,13 @@ class AllReviewsView(Frame):
         label = Label(self, text ="All Reviews", font = LARGEFONT)
         label.grid(row = 0, column = 1, padx = 5, pady = 5)
   
-        button1 = Button(self, text ="Home", command = lambda : controller.show_frame(Home))
-        button1.grid(row = 1, column = 0, padx = 5, pady = 5)
-  
-        button2 = Button(self, text ="Next Review", command = lambda : controller.show_frame(NextReviewView))
-        button2.grid(row = 2, column = 0, padx = 5, pady = 5)
-
-        button3 = Button(self, text ="Employees View", command = lambda : controller.show_frame(EmployeesView))
-        button3.grid(row = 3, column = 0, padx = 5, pady = 5)
-
-        button4 = Button(self, text ="Create New Template", command = lambda : controller.show_frame(CreateTemplateView))
-        button4.grid(row = 4, column = 0, padx = 5, pady = 5)
+        PopulateMenu(AllReviewsView, controller,self, 1)
 
         set = ttk.Treeview(self)
         set.grid(row = 1, column = 1, padx = 5, pady = 5)
 
-        set['columns']= ('product_title', 'star_rating', 'status', 'title', 'purchase_price', 'created', 'customer_id', 'checked_out_user_id', 'tl_assistance_required')
-        set.column("#0", width=0,  stretch=NO)
-        # set.column("id",anchor=CENTER, width=80)
-        set.column("product_title",anchor=CENTER, width=80)
-        # set.column("product_category",anchor=CENTER, width=80)
-        set.column("star_rating",anchor=CENTER, width=80)
-        set.column("status",anchor=CENTER, width=80)
-        set.column("title",anchor=CENTER, width=80)
-        # set.column("body",anchor=CENTER, width=80)
-        set.column("purchase_price",anchor=CENTER, width=80)
-        set.column("created",anchor=CENTER, width=80)
-        set.column("customer_id",anchor=CENTER, width=80)
-        set.column("checked_out_user_id",anchor=CENTER, width=80)
-        set.column("tl_assistance_required",anchor=CENTER, width=80)
-        # set.column("importance_score",anchor=CENTER, width=80)
-
-        set.heading("#0",text="",anchor=CENTER)
-        # set.heading("id",text="ID",anchor=CENTER)
-        set.heading("product_title",text="PRRODUCT TITLE",anchor=CENTER)
-        # set.heading("product_category",text="PRODUCT CAT.",anchor=CENTER)
-        set.heading("star_rating",text="STAR RATING",anchor=CENTER)
-        set.heading("status",text="STATUS",anchor=CENTER)
-        set.heading("title",text="TITLE",anchor=CENTER)
-        # set.heading("body",text="BODY",anchor=CENTER)
-        set.heading("purchase_price",text="PURCHASE PRICE",anchor=CENTER)
-        set.heading("created",text="CREATED",anchor=CENTER)
-        set.heading("customer_id",text="CUSTOMER ID",anchor=CENTER)
-        set.heading("checked_out_user_id",text="CO USER ID",anchor=CENTER)
-        set.heading("tl_assistance_required",text="TL ASSISTANCE",anchor=CENTER)
-        # set.heading("importance_score",text="IMPORTANCE",anchor=CENTER)
-
         reviews = list(service.get_all_test_reviews())
-
-        for index in range(len(reviews)):
-            review = reviews[index]
-            set.insert(parent='',index='end', iid=index, text='',
-        values=(review.get_product_title(), review.get_star_rating(), review.get_status(), review.get_title(), 
-        review.get_purchase_price(), review.get_created(), review.get_customer_id(), review.get_checked_out_user_id(), 
-        review.get_tl_assistance_required()))
+        populate_table(reviews, set)
 
 
 class EmployeesView(Frame):
@@ -263,46 +202,17 @@ class EmployeesView(Frame):
         self.service = service
         self.user = user
 
-        label = Label(self, text ="Employees View", font = LARGEFONT)
+        label = Label(self, text ="Employees", font = LARGEFONT)
         label.grid(row = 0, column = 1, padx = 5, pady = 5)
   
-        button1 = Button(self, text ="Home", command = lambda : controller.show_frame(Home))
-        button1.grid(row = 1, column = 0, padx = 5, pady = 5)
-  
-        button2 = Button(self, text ="Next Review", command = lambda : controller.show_frame(NextReviewView))
-        button2.grid(row = 2, column = 0, padx = 5, pady = 5)
-
-        button3 = Button(self, text ="All Reviews", command = lambda : controller.show_frame(AllReviewsView))
-        button3.grid(row = 3, column = 0, padx = 5, pady = 5)
-
-        button4 = Button(self, text ="Create New Template", command = lambda : controller.show_frame(CreateTemplateView))
-        button4.grid(row = 4, column = 0, padx = 5, pady = 5)
+        PopulateMenu(EmployeesView, controller,self, 1)
 
         set = ttk.Treeview(self)
         set.grid(row = 1, column = 1, padx = 5, pady = 5)
-
-        set['columns']= ('id', 'name', 'email', 'join_date', 'is_tl')
-        set.column("#0", width=0,  stretch=NO)
-        set.column("id",anchor=CENTER, width=120)
-        set.column("name",anchor=CENTER, width=120)
-        set.column("email",anchor=CENTER, width=120)
-        set.column("join_date",anchor=CENTER, width=120)
-        set.column("is_tl",anchor=CENTER, width=120)
-
-        set.heading("#0",text="",anchor=CENTER)
-        set.heading("id",text="ID",anchor=CENTER)
-        set.heading("name",text="NAME",anchor=CENTER)
-        set.heading("email",text="EMAIL",anchor=CENTER)
-        set.heading("join_date",text="JOIN_DATE",anchor=CENTER)
-        set.heading("is_tl",text="IS_TL",anchor=CENTER)
-
         employees = list(service.get_all_employees())
+        populate_table(employees, set)
 
-        for index in range(len(employees)):
-            employee = employees[index]
-            set.insert(parent='',index='end', iid=index, text='',
-        values=(employee.get_id(), employee.get_name(), employee.get_email(), employee.get_join_date(), 
-        employee.get_is_tl()))
+
 
 
 class CreateTemplateView(Frame):
@@ -316,17 +226,7 @@ class CreateTemplateView(Frame):
         label = Label(self, text ="Create New Template", font = LARGEFONT)
         label.grid(row = 0, column = 1, padx = 5, pady = 5)
   
-        button1 = Button(self, text ="Home", command = lambda : controller.show_frame(Home))
-        button1.grid(row = 1, column = 0, padx = 5, pady = 5)
-  
-        button2 = Button(self, text ="All Reviews", command = lambda : controller.show_frame(AllReviewsView))
-        button2.grid(row = 2, column = 0, padx = 5, pady = 5)
-
-        button3 = Button(self, text ="Employees View", command = lambda : controller.show_frame(EmployeesView))
-        button3.grid(row = 3, column = 0, padx = 5, pady = 5)
-
-        button4 = Button(self, text ="Next Review", command = lambda : controller.show_frame(NextReviewView))
-        button4.grid(row = 4, column = 0, padx = 5, pady = 5)
+        PopulateMenu(CreateTemplateView, controller,self, 1)
 
         self.create_button = Button(self, text ="Create Template", command = self.on_create_template)
         self.create_button.grid(row = 6, column = 0, padx = 5, pady = 5)
@@ -349,4 +249,54 @@ class CreateTemplateView(Frame):
     def on_create_template(self):
         self.service.add_template(Template(self.templatetitle.get("1.0", END), self.templatetext.get("1.0", END), self.user.get_id()))
         self.controller.show_frame(Home) 
+
+
+
+@staticmethod
+def PopulateMenu(currentMenuItem, controller, parent, startingRow):
+    if currentMenuItem !=  Home:
+        button1 = Button(parent, text ="Home", command = lambda : controller.show_frame(Home))
+        button1.grid(row = startingRow, column = 0, padx = 5, pady = 5)
+    
+    if currentMenuItem !=  AllReviewsView:
+        button2 = Button(parent, text ="All Reviews", command = lambda : controller.show_frame(AllReviewsView))
+        button2.grid(row = startingRow + 1, column = 0, padx = 5, pady = 5)
+
+    if currentMenuItem !=  NextReviewView:
+        button3 = Button(parent, text ="Next Review", command = lambda : controller.show_frame(NextReviewView))
+        button3.grid(row = startingRow + 2, column = 0, padx = 5, pady = 5)
+
+    if currentMenuItem !=  EmployeesView:
+        button4 = Button(parent, text ="Employees", command = lambda : controller.show_frame(EmployeesView))
+        button4.grid(row = startingRow + 3, column = 0, padx = 5, pady = 5)
+
+    if currentMenuItem !=  CreateTemplateView:
+        button5 = Button(parent, text ="Create New Template", command = lambda : controller.show_frame(CreateTemplateView))
+        button5.grid(row = startingRow + 4, column = 0, padx = 5, pady = 5)
+
+@staticmethod
+def populate_table(data, table):
+    table.heading("#0",text="",anchor=CENTER)
+    table.column("#0", width=0,  stretch=NO)
+    cols= []
+
+    for attr, value in data[0].__dict__.items():
+        if attr != 'id':
+            cols.append(attr)
+
+    table['columns']= tuple(cols)
+
+    for col in cols:
+        if attr != 'id':
+            table.column(col,anchor=CENTER, width=80)
+            table.heading(col,text=col.replace("_", " ").upper(),anchor=CENTER)
+
+
+    for i in range(len(data)):
+        rowData = []
+        for attr in cols:
+            rowData.append(getattr(data[i], attr))
+        table.insert(parent='',index='end', iid=i, text='', values=tuple(rowData))
+
+
 
