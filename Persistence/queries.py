@@ -12,6 +12,8 @@ SELECT_EMPLOYEE_BY_ID = "SELECT * FROM employee WHERE id = %s"
 
 SELECT_ACTIVE_REVIEWS = "SELECT * FROM review_clone_test WHERE status != 'CLOSED'"
 
+SELECT_ALL_REVIEWS_BY_EMPLOYEE = "SELECT * FROM review_clone_test WHERE checked_out_user = %s"
+
 SELECT_NEXT_REVIEW = "SELECT * FROM review_clone_test WHERE status = 'NEW' AND tl_assistance_required IS null ORDER BY importance_score desc LIMIT 1"
 
 SELECT_REVIEWS = "SELECT * FROM review_clone_test ORDER BY importance_score desc LIMIT %s"

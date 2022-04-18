@@ -30,7 +30,7 @@ class tkinterApp(Tk):
         if view is LoginView:
             frame = view(self.container, self, self.service)
         elif data:
-            frame = view(self.container, self, self.service, self.user, data=data)
+            frame = view(self.container, self, self.service, self.user, data)
         else:
             frame = view(self.container, self, self.service, self.user)
         frame.grid(row = 0, column = 0, sticky ="nsew")
@@ -104,26 +104,6 @@ class NextReviewView(Frame):
 
         self.current_coupon_code = None
 
-        self.coupon_amount_text = Text(self, height = 1, width = 10)
-        self.coupon_amount_text.bind("<Key>", self.on_coupon_value_changed)
-        self.coupon_amount_text.grid(row = 7, column = 0, padx = 5, pady = 5)
-
-        self.generate_coupon_button = Button(self, text = "Generate Coupon", command = self.on_coupon_create)
-        self.generate_coupon_button.grid(row = 8, column = 0, padx = 0, pady = 0)
-        self.generate_coupon_button["state"] = "disabled"
-
-        self.coupon_code_text = StringVar()
-        self.coupon_code_label= Label(self, textvariable=self.coupon_code_text, wraplength=100)
-        self.coupon_code_label.grid(row = 9, column = 0, padx = 0, pady = 0)
-
-        self.submit_button = Button(self, text ="Submit response", command = self.on_submit)
-        self.submit_button.grid(row = 3, column = 3, padx = 5, pady = 5)
-        self.submit_button["state"] = "disabled"
-
-        if not self.data:
-            self.tl_assistance_button = Button(self, text ="TL assistance required", command = lambda : self.set_tl_assistance_required(True))
-            self.tl_assistance_button.grid(row = 4, column = 3, padx = 5, pady = 5)
-
         self.reviewtitletext = StringVar()
         self.reviewtitlelabel= Label(self, textvariable=self.reviewtitletext, wraplength=1000)
         self.reviewtitlelabel.grid(row = 1, column = 1, padx = 5, pady = 5)
@@ -145,6 +125,26 @@ class NextReviewView(Frame):
         self.customernamelabel = Label(self, textvariable=self.customername, wraplength=1000)
         self.customernamelabel.grid(row = 2, column = 3, padx = 5, pady = 5)
 
+        if not self.data:
+            self.tl_assistance_button = Button(self, text ="TL assistance required", command = lambda : self.set_tl_assistance_required(True))
+            self.tl_assistance_button.grid(row = 3, column = 3, padx = 5, pady = 5)
+
+        self.submit_button = Button(self, text ="Submit response", command = self.on_submit)
+        self.submit_button.grid(row = 4, column = 3, padx = 5, pady = 5)
+        self.submit_button["state"] = "disabled"
+
+        self.coupon_amount_text = Text(self, height = 1, width = 10)
+        self.coupon_amount_text.bind("<Key>", self.on_coupon_value_changed)
+        self.coupon_amount_text.grid(row = 5, column = 3, padx = 5, pady = 5)
+
+        self.generate_coupon_button = Button(self, text = "Generate Coupon", command = self.on_coupon_create)
+        self.generate_coupon_button.grid(row = 6, column = 3, padx = 0, pady = 0)
+        self.generate_coupon_button["state"] = "disabled"
+
+        self.coupon_code_text = StringVar()
+        self.coupon_code_label= Label(self, textvariable=self.coupon_code_text, wraplength=100)
+        self.coupon_code_label.grid(row = 7, column = 3, padx = 0, pady = 0)
+
         self.responsetext = Text(self)
         self.responsetext.bind("<Key>", self.on_response_text_changed)
         self.responsetext.grid(row = 4, column = 1, padx = 5, pady = 5)
@@ -153,10 +153,10 @@ class NextReviewView(Frame):
         self.chosentemplatetitle.set(list(self.get_template_titles())[0])
 
         self.templatedropdown = OptionMenu(self, self.chosentemplatetitle, *list(self.get_template_titles()))
-        self.templatedropdown.grid(row = 11, column = 0, padx = 5, pady = 5)
+        self.templatedropdown.grid(row = 8, column = 3, padx = 5, pady = 5)
 
         self.templateapplybutton = Button(self, text ="Apply Template", command = self.apply_template)
-        self.templateapplybutton.grid(row = 12, column = 0, padx = 5, pady = 5)
+        self.templateapplybutton.grid(row = 9, column = 3, padx = 5, pady = 5)
 
         self.display_next_review()
 
@@ -189,8 +189,7 @@ class NextReviewView(Frame):
             self.tl_assistance_button["state"] = "disabled" if response else "normal"
 
     def on_coupon_value_changed(self, value):
-        coupon_amount = self.coupon_amount_text.get("1.0", END)
-        self.generate_coupon_button["state"] = "normal" if coupon_amount else "disabled"
+        self.generate_coupon_button["state"] = "normal" if self.coupon_amount_text.get("1.0", END) else "disabled"
 
     def on_submit(self):
         response = Response(self.responsetext.get("1.0", END), None, self.user.get_id(), self.current_review_id)
@@ -214,11 +213,17 @@ class NextReviewView(Frame):
 
     def on_coupon_create(self):
         letters = string.ascii_lowercase
-        self.current_coupon_code = ''.join(random.choice(letters) for i in range(10))
+        amount = self.coupon_amount_text.get("1.0", END).strip()
 
-        if self.coupon_amount_text.get("1.0", END).isdigit(): 
-            self.service.add_coupon(Coupon(self.current_coupon_code, "Pound", int(self.coupon_amount_text.get("1.0",END))))
-            self.coupon_code_text.set("Coupon code is: " + self.current_coupon_code)
+        if amount.isdigit(): 
+            couponValue = int(amount)
+            allowedCouponValue = 10 * (2.5 if self.data else 1) * (2 if self.customer.get_premier() == 1 else 1)
+            if couponValue > allowedCouponValue:
+                self.coupon_code_text.set(f'The max coupon value available is £{allowedCouponValue}')
+            else:    
+                self.current_coupon_code = ''.join(random.choice(letters) for i in range(10))
+                self.service.add_coupon(Coupon(self.current_coupon_code, "Pound", couponValue))
+                self.coupon_code_text.set("Coupon code is: " + self.current_coupon_code)
         else:
             self.coupon_code_text.set("You must enter a number as a coupon value")
 
@@ -255,16 +260,41 @@ class EmployeesView(Frame):
         Frame.__init__(self, parent)
         self.service = service
         self.user = user
-
+        self.controller = controller
+ 
         label = Label(self, text ="Employees", font = LARGEFONT)
         label.grid(row = 0, column = 1, padx = 5, pady = 5)
   
         PopulateMenu(EmployeesView, controller,self, 1,self.user.get_is_team_leader())
+ 
+        self.tree = ttk.Treeview(self)
+        self.tree.grid(row = 1, column = 1, padx = 5, pady = 5)
+        self.employees = list(service.get_all_employees())
+        populate_table(self.employees, self.tree)
+        
+        self.tree.bind("<Double-1>", self.on_row_selection_changed)
+ 
+    def on_row_selection_changed(self, event):
+        employeeIdx = int(self.tree.selection()[0])
+        self.controller.show_frame(EmployeeReviewsView, self.employees[employeeIdx])
+ 
+ 
+class EmployeeReviewsView(Frame):
+    def __init__(self, parent, controller, service, user, employee):
+        Frame.__init__(self, parent)
+        self.service = service
+        self.user = user
+        self.controller = controller
+        self.reviews = list(self.service.get_all_reviews_by_employee(employee.get_id()))
+        PopulateMenu(EmployeeReviewsView, controller,self, 1, self.user.get_is_team_leader())
+        header = "Reviews from Employee " + employee.get_name()
+        label = Label(self, text =header, font = LARGEFONT)
+        label.grid(row = 0, column = 1, padx = 5, pady = 5)
+ 
+        self.tree = ttk.Treeview(self)
+        self.tree.grid(row = 1, column = 1, padx = 5, pady = 5)
+        populate_table(self.reviews, self.tree)
 
-        set = ttk.Treeview(self)
-        set.grid(row = 1, column = 1, padx = 5, pady = 5)
-        employees = list(service.get_all_employees())
-        populate_table(employees, set)
 
 
 
@@ -386,10 +416,8 @@ def treeview_sort_column(tv, col, reverse):
     l = [(tv.set(k, col), k) for k in tv.get_children('')]
     l.sort(reverse=reverse, key = lambda tup : int(tup[0]) if tup[0].isdigit() else tup[0])
 
-    # rearrange items in sorted positions
     for index, (val, k) in enumerate(l):
         tv.move(k, '', index)
 
-    # reverse sort next time
     tv.heading(col, text=col, command=lambda _col=col: \
         treeview_sort_column(tv, _col, not reverse))

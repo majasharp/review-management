@@ -24,6 +24,11 @@ class Service:
             review[4], review[5], review[6], review[7], review[8], 
             review[9], review[10], review[11], review[12]), reviews)
 
+    def get_all_reviews_by_employee(self, id):
+        reviews = self.repository.execute_query(SELECT_ALL_REVIEWS_BY_EMPLOYEE, (id,))
+        return map(lambda review: Review(review[0], review[1], review[2], review[3], 
+            review[4], review[5], review[6], review[7], review[8], 
+            review[9], review[10], review[11], review[12]), reviews)
 
     def get_specific_review(self, reviewID):
         review = self.repository.get_rows(SELECT_REVIEW_BY_ID, (reviewID,))
