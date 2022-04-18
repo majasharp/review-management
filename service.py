@@ -30,23 +30,11 @@ class Service:
             review[4], review[5], review[6], review[7], review[8], 
             review[9], review[10], review[11], review[12]), reviews)
 
-    def get_specific_review(self, reviewID):
-        review = self.repository.get_rows(SELECT_REVIEW_BY_ID, (reviewID,))
-        return Review(review[0], review[1], review[2], review[3], 
-            review[4], review[5], review[6], review[7], review[8], 
-            review[9], review[10], review[11], review[12])
-
     def get_tl_required_reviews(self):
         reviews = self.repository.execute_query(SELECT_TL_REQUIRED_REVIEWS)
         return map(lambda review: Review(review[0], review[1], review[2], review[3], 
             review[4], review[5], review[6], review[7], review[8], 
             review[9], review[10], review[11], review[12]), reviews) 
-
-    def get_importance_calc_values(self):
-        reviews = self.repository.execute_query(CALC_IMPORTANCE_VALUES)
-        return map(lambda review: Review(review[0], review[1], review[2], review[3], 
-            review[4], review[5], review[6], review[7], review[8], 
-            review[9], review[10], review[11], review[12]), reviews)
 
     def get_all_employees(self):
         employees = self.repository.execute_query(SELECT_ALL_EMPLOYEES)
@@ -75,12 +63,6 @@ class Service:
     def update_coupon(self, coupon_code, response_id):
         self.repository.execute_command(UPDATE_COUPON_WITH_RESPONSE_ID, (response_id, coupon_code))
 
-    def get_coupon_id(self, code):
-        self.repository.execute_query(GET_COUPON_ID_WITH_COUPON_CODE, (code,))
-
-    def get_response_id(self, review_id):
-        self.repository.execute_query(SELECT_RESPONSE_ID_BY_REVIEW_ID, (review_id,))
-
     def add_template(self, template):
         self.repository.execute_command(ADD_TEMPLATE, (template.get_title(), template.get_body(), template.get_last_edited_user_id())) 
 
@@ -92,12 +74,12 @@ class Service:
         template = self.repository.execute_query(SELECT_TEMPLATE_BY_TITLE, (template_title,))[0]
         return Template(template[1], template[2], template[3], template[0])
 
+    def update_template(self, template_body, last_edited_user_id, template_title):
+        self.repository.execute_command(UPDATE_TEMPLATE, (template_body, last_edited_user_id, template_title))
+
     def get_customer_by_id(self, customer_id):
         customer = self.repository.execute_query(SELECT_CUSTOMER_BY_ID, (customer_id,))[0]
         return Customer(customer[0], customer[1], customer[2], customer[3], customer[4])
-
-    def update_template(self, template_body, last_edited_user_id, template_title):
-        self.repository.execute_command(UPDATE_TEMPLATE, (template_body, last_edited_user_id, template_title))
 
     def send_email(self, review, response, customer):
         msg = "Dear " + customer.get_name() + ",\n\n" \

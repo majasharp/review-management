@@ -1,22 +1,14 @@
-SELECT_ALL_REVIEWS = "SELECT * FROM review_clone_test"
-
-SELECT_ALL_TEST_REVIEWS = "SELECT * FROM review_clone_test"
-
 SELECT_TL_REQUIRED_REVIEWS = "SELECT * FROM review_clone_test WHERE tl_assistance_required = 1"
-
-SELECT_ALL_USERS = "SELECT * FROM users"
 
 SELECT_ALL_EMPLOYEES = "SELECT * FROM employee"
 
 SELECT_EMPLOYEE_BY_ID = "SELECT * FROM employee WHERE id = %s"
 
-SELECT_ACTIVE_REVIEWS = "SELECT * FROM review_clone_test WHERE status != 'CLOSED'"
+SELECT_ACTIVE_REVIEWS = "SELECT * FROM review_clone_test WHERE status != 'CLOSED' ORDER BY importance_score desc"
 
 SELECT_ALL_REVIEWS_BY_EMPLOYEE = "SELECT * FROM review_clone_test WHERE checked_out_user = %s"
 
 SELECT_NEXT_REVIEW = "SELECT * FROM review_clone_test WHERE status = 'NEW' AND tl_assistance_required IS null ORDER BY importance_score desc LIMIT 1"
-
-SELECT_REVIEWS = "SELECT * FROM review_clone_test ORDER BY importance_score desc LIMIT %s"
 
 SELECT_REVIEW_BY_ID = "SELECT * FROM review_clone_test WHERE id = %s"
 

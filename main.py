@@ -3,13 +3,16 @@ from Persistence.Entities.review import Review
 from Presentation.mainapp import tkinterApp
 from Persistence.databaseconfig import DataBaseConfigReader
 from Persistence.repository import Repository
-from Persistence.queries import SELECT_ALL_REVIEWS, SELECT_ALL_TEST_REVIEWS, SELECT_ALL_USERS
 from service import Service
 from nltk.sentiment import SentimentIntensityAnalyzer
 from mailconfig import MailConfigReader
 from mailservice import MailService
-
-
+from Presentation.loginview import LoginView
+from Presentation.TLViews.allreviewsview import AllReviewsView
+from Presentation.nextreviewview import NextReviewView
+from Presentation.TLViews.employeesview import EmployeesView
+from Presentation.TLViews.createtemplateview import CreateTemplateView
+from Presentation.TLViews.tlrequiredreviewsview import TLRequiredReviewsView
 
 def main ():
     dbReader = DataBaseConfigReader()
@@ -18,10 +21,18 @@ def main ():
     mailConfig = emailReader.deserialize('config.json')
     repository = Repository(dbConfig)
 
+    views = {
+        "All Reviews": AllReviewsView,
+        "Next Reviews": NextReviewView,
+        "Employees": EmployeesView,
+        "Templates": CreateTemplateView,
+        "Assistance Required":TLRequiredReviewsView
+    }
+
     mail = MailService(mailConfig)
     service = Service(repository, mail)    
 
-    app = tkinterApp(service)
+    app = tkinterApp(service, views)
     app.mainloop()
 
 
