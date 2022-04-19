@@ -7,3 +7,6 @@ class Employee(User):
 
     def get_is_tl(self):
         return self.is_tl
+
+    def set_is_tl(self, tl):
+        self.is_tl = tl

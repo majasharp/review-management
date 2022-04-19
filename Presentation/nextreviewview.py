@@ -13,7 +13,8 @@ class NextReviewView(Frame):
         self.service = service
         self.user = user
         self.data = data
-        
+        self.controller = controller
+
         label = Label(self, text ="Next Assistance Required Review" if self.data else"Next Review", font = LARGEFONT)
         label.grid(row = 0, column = 1, padx = 5, pady = 5)
   
@@ -102,8 +103,6 @@ class NextReviewView(Frame):
     def on_response_text_changed(self, value):
         response = self.responsetext.get("1.0", END)
         self.submit_button["state"] = "normal" if response else "disabled"
-        if not self.data:
-            self.tl_assistance_button["state"] = "disabled" if response else "normal"
 
     def on_coupon_value_changed(self, value):
         self.generate_coupon_button["state"] = "normal" if self.coupon_amount_text.get("1.0", END) else "disabled"
@@ -117,9 +116,11 @@ class NextReviewView(Frame):
             self.service.update_coupon(self.current_coupon_code, self.current_response_id)
 
         if self.data:
-            self.service.set_close_or_check("CLOSED", self.current_review_id)
             self.data.pop(0)
             self.set_tl_assistance_required(False)
+
+        if self.controller.employee.get_is_tl():
+            self.service.set_close_or_check("CLOSED", self.current_review_id)
         elif random.random() < 0.2:
             self.service.set_close_or_check("MANUAL REVIEW", self.current_review_id)
             self.display_next_review()
