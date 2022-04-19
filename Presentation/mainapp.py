@@ -15,18 +15,18 @@ class tkinterApp(Tk):
         self.container.grid_rowconfigure(0, weight = 1)
         self.container.grid_columnconfigure(0, weight = 1)
         
-        self.user = None
+        self.employee = None
         self.show_frame(LoginView)
 
     def show_frame(self, view, data=None):
         if view is LoginView:
             frame = view(self.container, self, self.service)
         elif data:
-            frame = view(self.container, self, self.service, self.user, data)
+            frame = view(self.container, self, self.service, self.employee, data)
         else:
-            frame = view(self.container, self, self.service, self.user)
+            frame = view(self.container, self, self.service, self.employee)
         frame.grid(row = 0, column = 0, sticky ="nsew")
         frame.tkraise()
 
-    def set_user(self, user):
-        self.user = user
+    def set_employee(self, user):
+        self.employee = user

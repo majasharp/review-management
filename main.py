@@ -45,7 +45,7 @@ def main ():
 
 def close_positive_reviews(x): #Sets review status to CLOSED if Star_rating > 3
     reader = DataBaseConfigReader()
-    config = reader.read_db_config('databaseconfig.json')
+    config = reader.deserialize('config.json')
     repository = Repository(config)
 
     sql = "UPDATE review_clone_test set status = 'CLOSED' where id = (%s)"
@@ -55,7 +55,7 @@ def close_positive_reviews(x): #Sets review status to CLOSED if Star_rating > 3
 
 def calculateSentimentScore(x):
     reader = DataBaseConfigReader()
-    config = reader.read_db_config('databaseconfig.json')
+    config = reader.deserialize('config.json')
     repository = Repository(config)
 
     
@@ -77,7 +77,7 @@ def calculateImportanceScore():
     #TODO - NEED MORE EFFICIENT WAY OF PULLING PREMIUM, STAR RATING, AND SENTIMENT_SCORE IN ONE GO, RATHER THAN INDIVIDUALLY
     # Need more efficient way of pulling premium, star_rating and sentiment_score in one, rather than individually
     reader = DataBaseConfigReader()
-    config = reader.read_db_config('databaseconfig.json')
+    config = reader.deserialize('config.json')
     repository = Repository(config)
     #self.service = service
 

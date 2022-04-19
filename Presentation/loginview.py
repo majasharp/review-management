@@ -19,9 +19,9 @@ class LoginView(Frame):
     
     def log_in(self, isTeamLeader):
         userId = 1 if isTeamLeader else 2
-        user = self.service.get_employee_by_id(userId)
-        user.set_is_team_leader(isTeamLeader)
-        self.controller.set_user(user)
+        employee = self.service.get_employee_by_id(userId)
+        employee.set_is_tl(isTeamLeader)
+        self.controller.set_employee(employee)
         if not isTeamLeader:
             self.controller.views = {key:val for key, val in self.controller.views.items() if val == NextReviewView}
         
