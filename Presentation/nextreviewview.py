@@ -121,6 +121,8 @@ class NextReviewView(Frame):
 
         if self.controller.employee.get_is_tl():
             self.service.set_close_or_check("CLOSED", self.current_review_id)
+            if not self.data:
+                self.display_next_review()
         elif random.random() < 0.2:
             self.service.set_close_or_check("MANUAL REVIEW", self.current_review_id)
             self.display_next_review()
@@ -152,5 +154,6 @@ class NextReviewView(Frame):
         self.responsetext.delete("1.0", END)
         template = self.service.get_template_by_title(self.chosentemplatetitle.get())
         self.responsetext.insert(END, template.get_body())
+        self.on_response_text_changed(template.get_body())
         
     
