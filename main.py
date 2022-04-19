@@ -32,11 +32,11 @@ def main ():
     mail = MailService(mailConfig)
     service = Service(repository, mail)    
 
-    app = tkinterApp(service, views)
-    app.mainloop()
+    #app = tkinterApp(service, views)
+    #app.mainloop()
 
 
-    #calculateImportanceScore()
+    calculateImportanceScoreNew(service)
   
 
     
@@ -45,7 +45,7 @@ def main ():
 
 def close_positive_reviews(x): #Sets review status to CLOSED if Star_rating > 3
     reader = DataBaseConfigReader()
-    config = reader.read_db_config('databaseconfig.json')
+    config = reader.deserialize('config.json')
     repository = Repository(config)
 
     sql = "UPDATE review_clone_test set status = 'CLOSED' where id = (%s)"
@@ -53,20 +53,13 @@ def close_positive_reviews(x): #Sets review status to CLOSED if Star_rating > 3
     repository.update_status_column(sql, val)
 
 
-def calculateSentimentScore(x):
+def calculateSentimentScore(body):
     reader = DataBaseConfigReader()
-    config = reader.read_db_config('databaseconfig.json')
+    config = reader.deserialize('config.json')
     repository = Repository(config)
 
-    
-    SQL = "SELECT body from review where id = (%s)"
-    val = (x,)
-    reviewBody = repository.returnSingleRow(SQL, val)
-
-    #print(reviewBody)
-
     sia = SentimentIntensityAnalyzer()
-    sentiment_score = sia.polarity_scores(reviewBody)['compound'] #saves compound score result to sentiment_score
+    sentiment_score = sia.polarity_scores(body)['compound'] #saves compound score result to sentiment_score
     #print(sentiment_score)
     return sentiment_score
  
@@ -77,13 +70,9 @@ def calculateImportanceScore():
     #TODO - NEED MORE EFFICIENT WAY OF PULLING PREMIUM, STAR RATING, AND SENTIMENT_SCORE IN ONE GO, RATHER THAN INDIVIDUALLY
     # Need more efficient way of pulling premium, star_rating and sentiment_score in one, rather than individually
     reader = DataBaseConfigReader()
-    config = reader.read_db_config('databaseconfig.json')
+    config = reader.deserialize('config.json')
     repository = Repository(config)
     #self.service = service
-
-
-    
-    
 
     for x in range (1, 250): 
         
@@ -131,14 +120,58 @@ def calculateImportanceScore():
 
         #print(importance_score)
 
-
-
         SQL = "UPDATE review_clone_test SET importance_score = (%s) WHERE id = (%s)" #SQL query to run
         val = (importance_score,x) #random sentiment score value to be inserted into sql query and row (x) in which to insert/update
 
         repository.execute_command(SQL, val) #Send  sql and SS value to execute_command() in repository.py
 
     repository.rmsdb.close()  
+
+
+def calculateImportanceScoreNew(service):
+    reader = DataBaseConfigReader()
+    config = reader.deserialize('config.json')
+    repository = Repository(config)
+    service = service
+
+    null_importance_reviews = list(service.get_null_importance_reviews())
+
+    for i in null_importance_reviews:
+        star_rating = i.get_star_rating()
+        premier = i.get_premier()
+        review_id = i.get_id()
+        body = i.get_review_body()
+        sentiment_score = calculateSentimentScore(body)
+        #print(star_rating)
+
+
+        if star_rating == 5:
+            base_score = 0
+            close_positive_reviews(review_id) #closes this review - don't want to spend time responding to reviews >3 stars
+        if star_rating == 4:
+            base_score = 0
+            close_positive_reviews(review_id)
+        if star_rating == 3:
+            base_score = 1
+        if star_rating == 2:
+            base_score = 2
+        if star_rating == 1:
+            base_score = 3
+
+
+        if sentiment_score < -0.005: #NTLK considers compound score < -0.005 to be negative. Converts sentiment_score to multiplier for calculating importance_score
+            sentiment_multiplier = abs(sentiment_score) + 1 #e.g. converts -0.335 to 1.335 
+        else:
+            sentiment_multiplier = 1 #if sentiment_score is positive, no multiplier
+
+        if premier == 1:
+            importance_score = (base_score * sentiment_multiplier) + 2
+        else:
+            importance_score = (base_score * sentiment_multiplier)
+
+        service.update_importance_scores(importance_score, review_id)
+    repository.rmsdb.close()  
+
 
 
 
