@@ -32,11 +32,11 @@ def main ():
     mail = MailService(mailConfig)
     service = Service(repository, mail)    
 
-    #app = tkinterApp(service, views)
-    #app.mainloop()
+    app = tkinterApp(service, views)
+    app.mainloop()
 
 
-    calculateImportanceScoreNew(service)
+    #calculateImportanceScoreNew(service)
   
 
     
