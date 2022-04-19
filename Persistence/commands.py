@@ -13,3 +13,5 @@ UPDATE_COUPON_WITH_RESPONSE_ID = "UPDATE coupon SET response_id = %s WHERE coupo
 ADD_TEMPLATE = "INSERT INTO template (title, body, last_edited_user_id) VALUES (%s, %s, %s)"
 
 UPDATE_TEMPLATE = "UPDATE template SET body = %s, last_edited_user_id = %s WHERE title = %s"
+
+UPDATE_IMPORTANCE_SCORE = "UPDATE review_clone_test SET importance_score = (%s) WHERE id = (%s)"

@@ -1,3 +1,4 @@
+from Persistence.Entities.customerreview import CustomerReview
 from Persistence.queries import *
 from Persistence.commands import *
 from Persistence.Entities.review import Review
@@ -92,9 +93,19 @@ class Service:
 
         self.__fire_and_forget(lambda: self.mail.send_mail(msg, customer.get_email()))
 
+    def get_null_importance_reviews(self):
+        reviews = self.repository.execute_query(SELECT_ALL_REVIEWS_WHERE_IMPORTANCE_SCORE_IS_NULL)
+        return map(lambda review: CustomerReview(review[0], review[1], review[2], review[3]), reviews)
+
+    def update_importance_scores(self, importance_score, review_id):
+        self.repository.execute_command(UPDATE_IMPORTANCE_SCORE, (importance_score, review_id))
+
     def __fire_and_forget(self, task, *args, **kwargs):
         loop = asyncio.get_event_loop()
         if callable(task):
             return loop.run_in_executor(None, task, *args, **kwargs)
         else:    
             raise TypeError('Task must be a callable')
+
+
+ 

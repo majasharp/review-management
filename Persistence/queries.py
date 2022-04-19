@@ -25,3 +25,5 @@ GET_COUPON_ID_WITH_COUPON_CODE = "SELECT id FROM coupon WHERE coupon_code = %s"
 SELECT_ALL_TEMPLATE_TITLES = "SELECT title FROM template"
 
 SELECT_TEMPLATE_BY_TITLE = "SELECT * FROM template WHERE title = %s"
+
+SELECT_ALL_REVIEWS_WHERE_IMPORTANCE_SCORE_IS_NULL = "SELECT r.id, r.star_rating, cu.premier, r.body FROM review_clone_test r inner join customer cu WHERE r.customer_id = cu.id AND r.importance_score IS NULL"
