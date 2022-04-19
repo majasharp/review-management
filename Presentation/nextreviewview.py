@@ -127,6 +127,7 @@ class NextReviewView(Frame):
             self.service.set_close_or_check("MANUAL REVIEW", self.current_review_id)
             self.display_next_review()
         else:
+            self.service.set_close_or_check("CLOSED", self.current_review_id)
             self.display_next_review()
 
         self.coupon_code_text.set("")
