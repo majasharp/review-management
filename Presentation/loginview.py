@@ -1,4 +1,5 @@
 from tkinter import *
+from Presentation.TLViews.allreviewsview import AllReviewsView
 from Presentation.nextreviewview import NextReviewView
 from Presentation.TLViews.tlrequiredreviewsview import TLRequiredReviewsView
 from Presentation.fonts import LARGEFONT
@@ -24,4 +25,7 @@ class LoginView(Frame):
         if not isTeamLeader:
             self.controller.views = {key:val for key, val in self.controller.views.items() if val == NextReviewView}
         
-        self.controller.show_frame(TLRequiredReviewsView if isTeamLeader else NextReviewView)
+        try:
+            self.controller.show_frame(TLRequiredReviewsView if isTeamLeader else NextReviewView)
+        except:
+            self.controller.show_frame(AllReviewsView)
