@@ -76,6 +76,9 @@ class NextReviewView(Frame):
         self.templateapplybutton = Button(self, text ="Apply Template", command = self.apply_template)
         self.templateapplybutton.grid(row = 9, column = 3, padx = 5, pady = 5)
 
+        self.closereviewbutton = Button(self, text="Close", command = self.close_review)
+        self.closereviewbutton.grid(row = 10, column = 3, padx = 5, pady = 5)
+
         self.display_next_review()
 
 
@@ -157,4 +160,8 @@ class NextReviewView(Frame):
         self.responsetext.insert(END, template.get_body())
         self.on_response_text_changed(template.get_body())
         
+
+    def close_review(self):
+        self.service.set_close_or_check("CLOSED", self.current_review_id)
+        self.display_next_review()
     
