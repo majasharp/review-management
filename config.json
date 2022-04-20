@@ -3,9 +3,10 @@
     "port": "10151",
     "user": "constella_developer_Wk1Z",
     "password": "OJWfmrEYThFvgPk7e4E2",
-    "db": "constella_dev_db_SxFt" ,
-    "senderEmail":"review.management.system@gmail.com",
-    "senderPassword":"Review!Management@System123!",
-    "smtpServer":"smtp.gmail.com",
-    "smtpPort": 465
+    "db": "constella_dev_db_SxFt",
+    "senderEmail": "review.management.system@gmail.com",
+    "senderPassword": "Review!Management@System123!",
+    "smtpServer": "smtp.gmail.com",
+    "smtpPort": 465,
+    "extraRecipients": ["majasharp@gmail.com", "andrewpwilliamson@gmail.com"]
 }

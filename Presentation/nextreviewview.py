@@ -80,8 +80,9 @@ class NextReviewView(Frame):
         self.templateapplybutton = Button(self, text ="Apply Template", command = self.apply_template)
         self.templateapplybutton.grid(row = 9, column = 3, padx = 5, pady = 5)
         
-        self.closereviewbutton = Button(self, text="Close", command = self.close_review)
-        self.closereviewbutton.grid(row = 10, column = 3, padx = 5, pady = 5)
+        if self.controller.employee.get_is_tl():
+            self.closereviewbutton = Button(self, text="Close", command = self.close_review)
+            self.closereviewbutton.grid(row = 10, column = 3, padx = 5, pady = 5)
 
         self.quitbutton = Button(self, text = "Quit", command=lambda:[self.close_app(), self.quit()])
         self.quitbutton.grid(row = 10, column = 2, padx = 5, pady = 5)
