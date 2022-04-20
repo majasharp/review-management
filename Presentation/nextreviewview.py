@@ -79,7 +79,7 @@ class NextReviewView(Frame):
 
         self.templateapplybutton = Button(self, text ="Apply Template", command = self.apply_template)
         self.templateapplybutton.grid(row = 9, column = 3, padx = 5, pady = 5)
-
+        
         self.closereviewbutton = Button(self, text="Close", command = self.close_review)
         self.closereviewbutton.grid(row = 10, column = 3, padx = 5, pady = 5)
 
@@ -177,10 +177,3 @@ class NextReviewView(Frame):
     def close_app(self):
         self.service.set_close_or_check("NEW", self.current_review_id)
         self.service.clear_checked_out_user(self.current_review_id)
-
-        
-      
-
-        
-
-    
