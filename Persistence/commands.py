@@ -15,3 +15,5 @@ ADD_TEMPLATE = "INSERT INTO template (title, body, last_edited_user_id) VALUES (
 UPDATE_TEMPLATE = "UPDATE template SET body = %s, last_edited_user_id = %s WHERE title = %s"
 
 UPDATE_IMPORTANCE_SCORE = "UPDATE review_clone_test SET importance_score = (%s) WHERE id = (%s)"
+
+CLEAR_CHECKED_OUT_USER_BY_ID = "UPDATE review_clone_test SET checked_out_user = null where id = %s"

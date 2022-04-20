@@ -6,7 +6,11 @@ import string
 from Presentation.fonts import LARGEFONT
 from Presentation.helpermethods import populate_menu
 
+
+
 class NextReviewView(Frame):
+
+    
 
     def __init__(self, parent, controller, service, user, data=None):
         Frame.__init__(self, parent)
@@ -78,6 +82,11 @@ class NextReviewView(Frame):
 
         self.closereviewbutton = Button(self, text="Close", command = self.close_review)
         self.closereviewbutton.grid(row = 10, column = 3, padx = 5, pady = 5)
+
+        self.quitbutton = Button(self, text = "Quit", command=lambda:[self.close_app(), self.quit()])
+        self.quitbutton.grid(row = 10, column = 2, padx = 5, pady = 5)
+
+        #self.testButton = Button(self, text=" test", command=lambda:[funct1(),funct2()])
 
         self.display_next_review()
 
@@ -164,4 +173,14 @@ class NextReviewView(Frame):
     def close_review(self):
         self.service.set_close_or_check("CLOSED", self.current_review_id)
         self.display_next_review()
+
+    def close_app(self):
+        self.service.set_close_or_check("NEW", self.current_review_id)
+        self.service.clear_checked_out_user(self.current_review_id)
+
+        
+      
+
+        
+
     
