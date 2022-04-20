@@ -28,7 +28,7 @@ class TLRequiredReviewsView(Frame):
         item = int(self.tree.selection()[0])
         # We are providing the NextReview screen with custom data (TL required reviews)
         # The first one should be the row that is clicked on. Therefore, we first insert the item to index 0, and then remove the old
-        # index which is now 1 lever higher (thus +1)
+        # index which is now 1 index higher (thus +1)
         self.reviews.insert(0, self.reviews[item])
         self.reviews.pop(item+1)
         

@@ -145,6 +145,7 @@ class NextReviewView(Frame):
                 self.current_coupon_code = ''.join(random.choice(letters) for i in range(10))
                 self.service.add_coupon(Coupon(self.current_coupon_code, "Pound", couponValue))
                 self.coupon_code_text.set("Coupon code is: " + self.current_coupon_code)
+                self.responsetext.insert(END, f"\n\nCoupon Code: {self.current_coupon_code}\nCoupon Value: £{couponValue}")
         else:
             self.coupon_code_text.set("You must enter a number as a coupon value")
 
