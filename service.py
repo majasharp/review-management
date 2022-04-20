@@ -1,3 +1,4 @@
+from email import message
 from Persistence.Entities.customerreview import CustomerReview
 from Persistence.queries import *
 from Persistence.commands import *
