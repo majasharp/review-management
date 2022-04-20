@@ -51,6 +51,9 @@ class Service:
     def set_close_or_check(self, status, review_id):
         self.repository.execute_command(SET_CLOSE_OR_MANUAL_CHECK_BY_ID, (status, review_id))
 
+    def clear_checked_out_user(self, review_id):
+        self.repository.execute_command(CLEAR_CHECKED_OUT_USER_BY_ID, (review_id,))
+
     def add_response(self, response):
         result = self.repository.execute_command(ADD_RESPONSE, (response.get_body(), response.get_coupon_id(), response.get_employee_id(), response.get_review_id()))
         return result
