@@ -44,7 +44,7 @@ def close_positive_reviews(x): #Sets review status to CLOSED if Star_rating > 3
     config = reader.deserialize('config.json')
     repository = Repository(config)
 
-    sql = "UPDATE review_clone_test set status = 'CLOSED' where id = (%s)"
+    sql = "UPDATE review set status = 'CLOSED' where id = (%s)"
     val = (x,)
     repository.update_status_column(sql, val)
 
