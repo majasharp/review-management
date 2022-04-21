@@ -8,5 +8,5 @@
     "senderPassword": "Review!Management@System123!",
     "smtpServer": "smtp.gmail.com",
     "smtpPort": 465,
-    "extraRecipients": ["majasharp@gmail.com", "andrewpwilliamson@gmail.com"]
+    "extraRecipients": ["majasharp@gmail.com", "andrewpwilliamson@googlemail.com"]
 }

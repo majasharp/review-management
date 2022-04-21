@@ -14,6 +14,10 @@ class MailService:
         server.ehlo()
         server.login(self.config.get_sender_email(), self.config.get_sender_password())
 
-        message = 'Subject: {}\n\n{}'.format('Response to your review from Constella Review Management', message)
-        server.sendmail(self.config.get_sender_email(), " ,".join(recipients), message)
+        msg = MIMEText(message)
+        msg['Subject'] = "Response to your review from Constella Review Management"
+        msg['From'] = self.config.get_sender_email()
+        msg['To'] = ", ".join(recipients)
+        
+        server.sendmail(self.config.get_sender_email(), recipients, msg.as_string())
         server.quit()
