@@ -1,6 +1,4 @@
-import asyncio
 from Persistence.commands import SET_STATUS_CLOSED
-from Persistence.queries import SELECT_ALL_REVIEWS_BY_EMPLOYEE
 from Presentation.mainapp import tkinterApp
 from Persistence.databaseconfig import DataBaseConfigReader
 from Persistence.repository import Repository
