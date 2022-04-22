@@ -7,6 +7,9 @@ from Persistence.Entities.employee import Employee
 from Persistence.Entities.customer import Customer
 from Persistence.Entities.template import Template
 import asyncio
+from Presentation.helpermethods import calculate_importance_score
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
 
 class Service:
     
@@ -101,8 +104,23 @@ class Service:
         reviews = self.repository.execute_query(SELECT_ALL_REVIEWS_WHERE_IMPORTANCE_SCORE_IS_NULL)
         return map(lambda review: CustomerReview(review[0], review[1], review[2], review[3]), reviews)
 
-    def update_importance_scores(self, importance_score, review_id):
-        self.repository.execute_command(UPDATE_IMPORTANCE_SCORE, (importance_score, review_id))
+    def update_importance_scores(self):
+        def update():
+            try:
+                reviews = list(self.get_null_importance_reviews())
+                print(len(reviews))
+                sia = SentimentIntensityAnalyzer()
+
+                for review in reviews:
+                        sentiment_score = sia.polarity_scores(review.get_review_body())['compound'] #saves compound score result to sentiment_score <-0.005
+                        importance_score = calculate_importance_score(review, sentiment_score)
+                        print(importance_score)
+                        self.repository.execute_command(UPDATE_IMPORTANCE_SCORE, (importance_score, review.get_id()))
+            except Exception as e:
+                print(str(e))
+
+        self.__fire_and_forget(update)
+        
 
     def __fire_and_forget(self, task, *args, **kwargs):
         loop = asyncio.get_event_loop()

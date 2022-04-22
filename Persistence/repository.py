@@ -37,11 +37,6 @@ class Repository:
         self.cursor.execute(query, params)
         return self.cursor.fetchall()
 
-    def update_status_column(self, query, params):
-        self.cursor.execute(query, params)
-        self.rmsdb.commit()
-
-
 
 
 

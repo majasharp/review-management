@@ -2,16 +2,12 @@ from tkinter import *
 from Persistence.Entities.response import Response
 from Persistence.Entities.coupon import Coupon
 import random
-import string
 from Presentation.fonts import LARGEFONT
-from Presentation.helpermethods import populate_menu
+from Presentation.helpermethods import populate_menu, validate_coupon_amount
 
 
 
 class NextReviewView(Frame):
-
-    
-
     def __init__(self, parent, controller, service, user, data=None):
         Frame.__init__(self, parent)
         self.service = service
@@ -146,21 +142,15 @@ class NextReviewView(Frame):
         self.coupon_code_text.set("")
 
     def on_coupon_create(self):
-        letters = string.ascii_lowercase
-        amount = self.coupon_amount_text.get("1.0", END).strip()
-
-        if amount.isdigit(): 
+        try:
+            amount = self.coupon_amount_text.get("1.0", END).strip()
+            self.current_coupon_code = validate_coupon_amount(amount, self.data, self.customer.get_premier())
             couponValue = int(amount)
-            allowedCouponValue = 10 * (2.5 if self.data else 1) * (2 if self.customer.get_premier() == 1 else 1)
-            if couponValue > allowedCouponValue:
-                self.coupon_code_text.set(f'The max coupon value available is £{allowedCouponValue}')
-            else:    
-                self.current_coupon_code = ''.join(random.choice(letters) for i in range(10))
-                self.service.add_coupon(Coupon(self.current_coupon_code, "Pound", couponValue))
-                self.coupon_code_text.set("Coupon code is: " + self.current_coupon_code)
-                self.responsetext.insert(END, f"\n\nCoupon Code: {self.current_coupon_code}\nCoupon Value: £{couponValue}")
-        else:
-            self.coupon_code_text.set("You must enter a number as a coupon value")
+            self.service.add_coupon(Coupon(self.current_coupon_code, "Pound", couponValue))
+            self.coupon_code_text.set("Coupon code is: " + self.current_coupon_code)
+            self.responsetext.insert(END, f"\n\nCoupon Code: {self.current_coupon_code}\nCoupon Value: £{couponValue}")
+        except Exception as e:
+            self.coupon_code_text.set(str(e))
 
     def get_template_titles(self):
         return self.service.get_template_titles()

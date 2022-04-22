@@ -17,3 +17,5 @@ UPDATE_TEMPLATE = "UPDATE template SET body = %s, last_edited_user_id = %s WHERE
 UPDATE_IMPORTANCE_SCORE = "UPDATE review_clone_test SET importance_score = (%s) WHERE id = (%s)"
 
 CLEAR_CHECKED_OUT_USER_BY_ID = "UPDATE review_clone_test SET checked_out_user = null where id = %s"
+
+SET_STATUS_CLOSED = "UPDATE review_clone_test set status = 'CLOSED' where star_rating > %s"

@@ -1,10 +1,8 @@
-from html import entities
-from Persistence.Entities.review import Review
+from Persistence.commands import SET_STATUS_CLOSED
 from Presentation.mainapp import tkinterApp
 from Persistence.databaseconfig import DataBaseConfigReader
 from Persistence.repository import Repository
 from service import Service
-from nltk.sentiment import SentimentIntensityAnalyzer
 from mailconfig import MailConfigReader
 from mailservice import MailService
 from Presentation.loginview import LoginView
@@ -13,8 +11,17 @@ from Presentation.nextreviewview import NextReviewView
 from Presentation.TLViews.employeesview import EmployeesView
 from Presentation.TLViews.createtemplateview import CreateTemplateView
 from Presentation.TLViews.tlrequiredreviewsview import TLRequiredReviewsView
+import nltk
 
 def main ():
+    # Please execute this line of code and install package "vader lexicon" in the right directory.
+    # In case you are unsure of the correct directory, please run the application without executing this method. It will then state the directories it's looked in
+    # Copy that directory, run this method, select vader lexicon, copy paste the desired directory folder into the correct textfield and press download
+    # Restart the application and it works! (In case you do not do this step, the sentiments will not be calculated and ingested - this is done in a background job
+    # and will therefore not cause any issues for the user's current session)
+    def setup_nltk():
+        nltk.download()
+    
     dbReader = DataBaseConfigReader()
     emailReader = MailConfigReader()
     dbConfig = dbReader.deserialize('config.json')
@@ -31,79 +38,13 @@ def main ():
 
     mail = MailService(mailConfig)
     service = Service(repository, mail)    
+    
+    # Set all positive reviews closed
+    repository.execute_command(SET_STATUS_CLOSED, (3,))
+    service.update_importance_scores() #This happens in the background so as to not block the main thread, see comment above
 
     app = tkinterApp(service, views)
     app.mainloop()
-
-
-    #calculateImportanceScoreNew(service)
-
-
-def close_positive_reviews(x): #Sets review status to CLOSED if Star_rating > 3
-    reader = DataBaseConfigReader()
-    config = reader.deserialize('config.json')
-    repository = Repository(config)
-
-    sql = "UPDATE review_clone_test set status = 'CLOSED' where id = (%s)"
-    val = (x,)
-    repository.update_status_column(sql, val)
-
-
-def calculateSentimentScore(body):
-    reader = DataBaseConfigReader()
-    config = reader.deserialize('config.json')
-    repository = Repository(config)
-
-    sia = SentimentIntensityAnalyzer()
-    sentiment_score = sia.polarity_scores(body)['compound'] #saves compound score result to sentiment_score <-0.005 
-
-    return sentiment_score
- 
-
-def calculateImportanceScoreNew(service):
-    reader = DataBaseConfigReader()
-    config = reader.deserialize('config.json')
-    repository = Repository(config)
-    service = service
-
-    null_importance_reviews = list(service.get_null_importance_reviews())
-
-    for i in null_importance_reviews:
-        star_rating = i.get_star_rating()
-        premier = i.get_premier()
-        review_id = i.get_id()
-        body = i.get_review_body()
-        sentiment_score = calculateSentimentScore(body)
-
-
-        if star_rating == 5:
-            base_score = 0
-            close_positive_reviews(review_id) #closes this review - don't want to spend time responding to reviews >3 stars
-        if star_rating == 4:
-            base_score = 0
-            close_positive_reviews(review_id)
-        if star_rating == 3:
-            base_score = 1
-        if star_rating == 2:
-            base_score = 2
-        if star_rating == 1:
-            base_score = 3
-
-
-        if sentiment_score < -0.005: #NTLK considers compound score < -0.005 to be negative. Converts sentiment_score to multiplier for calculating importance_score
-            sentiment_multiplier = abs(sentiment_score) + 1 #e.g. converts -0.335 to 1.335 
-        else:
-            sentiment_multiplier = 1 #if sentiment_score is positive, no multiplier
-
-        if premier == 1:
-            importance_score = (base_score * sentiment_multiplier) + 2
-        else:
-            importance_score = (base_score * sentiment_multiplier)
-
-        service.update_importance_scores(importance_score, review_id)
-    repository.rmsdb.close()  
-
-
 
 if __name__ == "__main__":
     main()

@@ -12,7 +12,6 @@ class CustomerReview:
     def get_star_rating(self):
         return self.star_rating
 
-
     def get_premier(self):
         return self.premier
 
