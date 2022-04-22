@@ -4,7 +4,7 @@ SELECT_ALL_EMPLOYEES = "SELECT * FROM employee"
 
 SELECT_EMPLOYEE_BY_ID = "SELECT * FROM employee WHERE id = %s"
 
-SELECT_ACTIVE_REVIEWS = "SELECT * FROM review WHERE status != 'CLOSED' ORDER BY importance_score desc"
+SELECT_ACTIVE_REVIEWS = "SELECT * FROM review WHERE status != 'CLOSED' ORDER BY importance_score desc limit 1000"
 
 SELECT_ALL_REVIEWS_BY_EMPLOYEE = "SELECT * FROM review WHERE checked_out_user = %s"
 
