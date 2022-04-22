@@ -11,14 +11,14 @@ class Repository:
             database = dataBaseConfig.get_db()
         )
 
-        self.cursor = self.rmsdb.cursor()
-
+        self.cursor = self.rmsdb.cursor(buffered=True)
+        
     def execute_query(self, query, val=None):
         if val:
             self.cursor.execute(query, val)
         else:
             self.cursor.execute(query)
-        return self.cursor.fetchall() 
+        return self.cursor.fetchall()
 
 
     def execute_command(self, query, val): #For inserting values into DB
