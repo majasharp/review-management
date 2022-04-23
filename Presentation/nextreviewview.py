@@ -76,11 +76,11 @@ class NextReviewView(Frame):
         self.templateapplybutton = Button(self, text ="Apply Template", command = self.apply_template)
         self.templateapplybutton.grid(row = 9, column = 3, padx = 5, pady = 5)
         
-        if self.controller.employee.get_is_tl():
-            self.closereviewbutton = Button(self, text="Close", command = self.close_review)
-            self.closereviewbutton.grid(row = 10, column = 3, padx = 5, pady = 5)
 
-        self.quitbutton = Button(self, text = "Quit", command=lambda:[self.close_app(), self.quit()])
+        self.closereviewbutton = Button(self, text="Close", command = self.close_review)
+        self.closereviewbutton.grid(row = 10, column = 3, padx = 5, pady = 5)
+
+        self.quitbutton = Button(self, text = "Quit", command=lambda:[self.quit_app(), self.quit()])
         self.quitbutton.grid(row = 10, column = 2, padx = 5, pady = 5)
 
         #self.testButton = Button(self, text=" test", command=lambda:[funct1(),funct2()])
@@ -163,9 +163,18 @@ class NextReviewView(Frame):
         
 
     def close_review(self):
-        self.service.set_close_or_check("CLOSED", self.current_review_id)
-        self.display_next_review()
+        if self.controller.employee.get_is_tl():
+            self.service.set_close_or_check("CLOSED", self.current_review_id)
+            if not self.data:
+                self.display_next_review()
+        elif random.random() < 0.2:
+            self.service.set_close_or_check("MANUAL REVIEW", self.current_review_id)
+            self.display_next_review()
+        else:
+            self.service.set_close_or_check("CLOSED", self.current_review_id)
+            self.display_next_review()
 
-    def close_app(self):
+
+    def quit_app(self):
         self.service.set_close_or_check("NEW", self.current_review_id)
         self.service.clear_checked_out_user(self.current_review_id)
